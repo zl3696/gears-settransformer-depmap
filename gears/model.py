@@ -33,6 +33,93 @@ class MLP(torch.nn.Module):
         return self.network(x)
 
 
+class MultiheadAttentionBlock(torch.nn.Module):
+
+    def __init__(self, query_size, key_size, output_size, num_heads, layer_norm=True):
+        """
+        Multihead attention block (Lee et al., 2019)
+        :param query_size: dimension of the queries
+        :param key_size: dimension of the keys and values
+        :param output_size: output dimension
+        :param num_heads: number of attention heads
+        :param layer_norm: whether to use layer normalization
+        """
+        super(MultiheadAttentionBlock, self).__init__()
+        assert output_size % num_heads == 0, 'output_size must be divisible by num_heads'
+        self.output_size = output_size
+        self.num_heads = num_heads
+        self.query_linear = nn.Linear(query_size, output_size)
+        self.key_linear = nn.Linear(key_size, output_size)
+        self.value_linear = nn.Linear(key_size, output_size)
+        self.output_linear = nn.Linear(output_size, output_size)
+        self.norm_attention = nn.LayerNorm(output_size) if layer_norm else nn.Identity()
+        self.norm_output = nn.LayerNorm(output_size) if layer_norm else nn.Identity()
+
+    def forward(self, queries, keys, mask=None):
+        """
+        :param queries: [batch, num_queries, query_size]
+        :param keys: [batch, num_keys, key_size]
+        :param mask: [batch, num_keys] bool, True for real elements, False for padding
+        """
+        batch_size = queries.shape[0]
+        head_size = self.output_size // self.num_heads
+
+        queries = self.query_linear(queries)
+        values = self.value_linear(keys)
+        keys = self.key_linear(keys)
+
+        # split into heads: [batch, num_heads, set_size, head_size]
+        def split_heads(tensor):
+            return tensor.view(batch_size, -1, self.num_heads, head_size).transpose(1, 2)
+        queries_heads = split_heads(queries)
+        keys_heads = split_heads(keys)
+        values_heads = split_heads(values)
+
+        scores = queries_heads @ keys_heads.transpose(-2, -1) / head_size ** 0.5
+        if mask is not None:
+            # padded keys get zero attention weight
+            scores = scores.masked_fill(~mask[:, None, None, :], float('-inf'))
+        attention = torch.softmax(scores, dim=-1)
+
+        output = queries_heads + attention @ values_heads
+        output = output.transpose(1, 2).reshape(batch_size, -1, self.output_size)
+        output = self.norm_attention(output)
+        output = output + F.relu(self.output_linear(output))
+        output = self.norm_output(output)
+        return output
+
+
+class SetAttentionBlock(torch.nn.Module):
+
+    def __init__(self, input_size, output_size, num_heads, layer_norm=True):
+        """
+        Set attention block: self-attention among the elements of a set
+        """
+        super(SetAttentionBlock, self).__init__()
+        self.attention_block = MultiheadAttentionBlock(input_size, input_size, output_size,
+                                                       num_heads, layer_norm=layer_norm)
+
+    def forward(self, elements, mask=None):
+        return self.attention_block(elements, elements, mask)
+
+
+class PoolingByMultiheadAttention(torch.nn.Module):
+
+    def __init__(self, hidden_size, num_heads, num_seeds=1, layer_norm=True):
+        """
+        Pooling by multihead attention: learnable seed vectors attend over the set
+        """
+        super(PoolingByMultiheadAttention, self).__init__()
+        self.seeds = nn.Parameter(torch.Tensor(1, num_seeds, hidden_size))
+        nn.init.xavier_uniform_(self.seeds)
+        self.attention_block = MultiheadAttentionBlock(hidden_size, hidden_size, hidden_size,
+                                                       num_heads, layer_norm=layer_norm)
+
+    def forward(self, elements, mask=None):
+        seeds = self.seeds.repeat(elements.shape[0], 1, 1)
+        return self.attention_block(seeds, elements, mask)
+
+
 class GEARS_Model(torch.nn.Module):
     """
     GEARS model
@@ -68,7 +155,16 @@ class GEARS_Model(torch.nn.Module):
         self.pert_base_trans = nn.ReLU()
         self.transform = nn.ReLU()
         self.emb_trans_v2 = MLP([hidden_size, hidden_size, hidden_size], last_layer_act='ReLU')
-        self.pert_fuse = MLP([hidden_size, hidden_size, hidden_size], last_layer_act='ReLU')
+
+        # perturbation set aggregation: 'sum' (original GEARS) or 'set_transformer'
+        self.pert_agg = args.get('pert_agg', 'sum')
+        if self.pert_agg == 'set_transformer':
+            self.set_attention = SetAttentionBlock(hidden_size, hidden_size, num_heads=4)
+            self.set_pooling = PoolingByMultiheadAttention(hidden_size, num_heads=4)
+        elif self.pert_agg == 'sum':
+            self.pert_fuse = MLP([hidden_size, hidden_size, hidden_size], last_layer_act='ReLU')
+        else:
+            raise ValueError("pert_agg must be 'sum' or 'set_transformer'")
         
         # gene co-expression GNN
         self.G_coexpress = args['G_coexpress'].to(args['device'])
@@ -163,7 +259,31 @@ class GEARS_Model(torch.nn.Module):
             ## add global perturbation embedding to each gene in each cell in the batch
             base_emb = base_emb.reshape(num_graphs, self.num_genes, -1)
 
-            if pert_index.shape[0] != 0:
+            if pert_index.shape[0] != 0 and self.pert_agg == 'set_transformer':
+                ### group perturbed genes by sample, then pad to [num_perturbed_samples, max_set_size, hidden]
+                pert_sets = {}
+                for sample, pert in zip(pert_index[0].tolist(), pert_index[1].tolist()):
+                    pert_sets.setdefault(sample, []).append(pert)
+
+                samples = list(pert_sets.keys())
+                max_set_size = max(len(perts) for perts in pert_sets.values())
+                padded_perts = torch.zeros(len(samples), max_set_size, dtype=torch.long)
+                mask = torch.zeros(len(samples), max_set_size, dtype=torch.bool)
+                for row, sample in enumerate(samples):
+                    perts = pert_sets[sample]
+                    padded_perts[row, :len(perts)] = torch.tensor(perts)
+                    mask[row, :len(perts)] = True
+                padded_perts = padded_perts.to(self.args['device'])
+                mask = mask.to(self.args['device'])
+
+                pert_set_emb = pert_global_emb[padded_perts]
+                pert_set_emb = self.set_attention(pert_set_emb, mask)
+                emb_total = self.set_pooling(pert_set_emb, mask).squeeze(1)
+
+                for row, sample in enumerate(samples):
+                    base_emb[sample] = base_emb[sample] + emb_total[row]
+
+            elif pert_index.shape[0] != 0:
                 ### in case all samples in the batch are controls, then there is no indexing for pert_index.
                 pert_track = {}
                 for i, j in enumerate(pert_index[0]):

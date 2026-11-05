@@ -116,7 +116,8 @@ class GEARS:
                 'coexpress_threshold': 'pearson correlation threshold when constructing coexpression graph, default 0.4',
                 'uncertainty': 'whether or not to turn on uncertainty mode, default False',
                 'uncertainty_reg': 'regularization term to balance uncertainty loss and prediction loss, default 1',
-                'direction_lambda': 'regularization term to balance direction loss and prediction loss, default 1'
+                'direction_lambda': 'regularization term to balance direction loss and prediction loss, default 1',
+                'pert_agg': "perturbation set aggregation, 'sum' or 'set_transformer', default 'sum'"
                }
     
     def model_initialize(self, hidden_size = 64,
@@ -134,6 +135,7 @@ class GEARS:
                          G_coexpress = None,
                          G_coexpress_weight = None,
                          no_perturb = False,
+                         pert_agg = 'sum',
                          **kwargs
                         ):
         """
@@ -171,6 +173,9 @@ class GEARS:
             co-expression graph edge weights, default None
         no_perturb: bool
             predict no perturbation condition, default False
+        pert_agg: str
+            how to aggregate the embeddings of perturbed genes: 'sum' (original
+            GEARS) or 'set_transformer', default 'sum'
 
         Returns
         -------
@@ -194,7 +199,8 @@ class GEARS:
                        'device': self.device,
                        'num_genes': self.num_genes,
                        'num_perts': self.num_perts,
-                       'no_perturb': no_perturb
+                       'no_perturb': no_perturb,
+                       'pert_agg': pert_agg
                       }
         
         if self.wandb:
