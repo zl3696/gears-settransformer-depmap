@@ -1,0 +1,102 @@
+{
+  "neural_model_fits_planned": 20,
+  "population": {
+    "benchmark_protocol_locked": false,
+    "canonical_conditions": 231,
+    "control_cells": 7353,
+    "excluded_cells": 1848,
+    "expression_genes": 5045,
+    "expression_policy": "Unchanged processed X; no normalization, log transform, or PCA",
+    "expression_values_decoded": false,
+    "input_sha256": {
+      "data/norman/perturb_processed.h5ad": "23ffb0fac6a847ff927cf7509d80d85052bfefbfb97610786a2dafaaefa0b6a0",
+      "tmp/morph-gears-review/essential_all_data_pert_genes.pkl": "46c3dfe354d8ad5c0da22c69f3d0ca451987b1a61ed9d984279b22b9565ff8d7",
+      "tmp/morph-gears-review/gene2go_all.pkl": "f145c5e84a53048d87942a417d870a4f2d8db50200b96e492b358c13aba8c771"
+    },
+    "original_condition_labels": 277,
+    "outcome_access": "obs/var metadata and X shape only; source SHA256 streams raw file bytes",
+    "pair_conditions": 128,
+    "perturbation_nodes": 9853,
+    "preserved_source_cell_type_placeholder": "A549",
+    "prior_exposure": [
+      "Dataset-wide descriptive PCA on 24 October 2026",
+      "Earlier data preview and coverage audits; see docs/norman-data.md"
+    ],
+    "released_uns_rankings_decoded": false,
+    "retained_cells": 89357,
+    "single_conditions": 102,
+    "source_biological_cell_type": "K562",
+    "source_shape": [
+      91205,
+      5045
+    ]
+  },
+  "splits": [
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 1,
+      "target_cell_counts": {
+        "test": 7214,
+        "train": 76724,
+        "val": 5419
+      }
+    },
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 2,
+      "target_cell_counts": {
+        "test": 6901,
+        "train": 74686,
+        "val": 7770
+      }
+    },
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 3,
+      "target_cell_counts": {
+        "test": 6340,
+        "train": 75199,
+        "val": 7818
+      }
+    },
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 4,
+      "target_cell_counts": {
+        "test": 8036,
+        "train": 74101,
+        "val": 7220
+      }
+    },
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 5,
+      "target_cell_counts": {
+        "test": 6803,
+        "train": 76086,
+        "val": 6468
+      }
+    }
+  ],
+  "status": "splits_prepared_training_not_started"
+}

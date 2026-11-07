@@ -1,0 +1,33 @@
+{
+  "cache_key_inputs": {
+    "configuration": "ae25a8afa62d7c79f62d43130e8cd5c87a9aae1c2a5a4c323a924eaeb3ca3d1d",
+    "genes": "40425d46b531b0da29abd60f295cc765e6226c1660fcabbfee75e8d366280799",
+    "graph_fit_cell_ids": "b9475b06cba840523612fa5538efd5d584cd0f41e0ab1adb960329d085413c36",
+    "manifest": "ff107f48f0c32d219d588145e1f228d08558cdd8c93e9ee71d1f61ae624fb5ae",
+    "source": {
+      "data/norman/perturb_processed.h5ad": "23ffb0fac6a847ff927cf7509d80d85052bfefbfb97610786a2dafaaefa0b6a0",
+      "tmp/morph-gears-review/essential_all_data_pert_genes.pkl": "46c3dfe354d8ad5c0da22c69f3d0ca451987b1a61ed9d984279b22b9565ff8d7",
+      "tmp/morph-gears-review/gene2go_all.pkl": "f145c5e84a53048d87942a417d870a4f2d8db50200b96e492b358c13aba8c771"
+    }
+  },
+  "cache_key_sha256": "7551b628aac4bf462e4a44f9370aa4099db67514efaae5c37bb2d59633e9c05a",
+  "coexpression": {
+    "fit_cell_ids_sha256": "b9475b06cba840523612fa5538efd5d584cd0f41e0ab1adb960329d085413c36",
+    "fit_cells": 54931,
+    "k": null,
+    "materialized": false,
+    "policy": "Pinned upstream training controls and singles only; never validation/test pairs",
+    "source_label_selection": "source_condition in train and 'ctrl' in source_condition",
+    "threshold": null
+  },
+  "go": {
+    "perturbation_node_sha256": "30df70bb85bd2b41213bbe159cf66062effe3ae71bedb7ab2cd95d95f8057b02",
+    "policy": "Default GEARS external GO annotations; expression-independent"
+  },
+  "pending": [
+    "Freeze graph hyperparameters and build edge tensors before training",
+    "Resolve coexpression batching policy for every model"
+  ],
+  "shared_across_models": true,
+  "status": "specification_only_not_fitted"
+}
