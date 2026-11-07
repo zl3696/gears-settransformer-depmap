@@ -2,6 +2,14 @@
 
 This repository hosts the official implementation of GEARS, a method that can predict transcriptional response to both single and multi-gene perturbations using single-cell RNA-sequencing data from perturbational screens. 
 
+### Project: shared Norman splits
+
+The [Norman split workflow](docs/norman-splits.md) provides five frozen 76/26/26
+training/validation/test pair splits using seeds 1–5. All single conditions and
+controls remain in every training partition. The snapshot, portable verification
+and rebuilding script, and regression tests are included; training integration
+and benchmark results remain pending.
+
 
 <p align="center"><img src="https://github.com/snap-stanford/GEARS/blob/master/img/gears.png" alt="gears" width="900px" /></p>
 

@@ -1,0 +1,112 @@
+{
+  "bundle_sha256": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34",
+  "checks": {
+    "all_singles_controls_in_training": true,
+    "both_singles_for_each_pair_in_training": true,
+    "every_retained_cell_assigned_once": true,
+    "held_out_outcomes_decoded": false,
+    "original_expression_gene_order_preserved": true,
+    "released_rankings_decoded": false,
+    "seed_1000_control_draws_reproduced": true,
+    "whole_conditions_and_aliases_together": true
+  },
+  "evaluation_pair_target_inputs": 34426,
+  "full_regeneration_identical": true,
+  "gears_custom_interface": {
+    "reference": {
+      "custom_manifests_loaded": 5,
+      "scope": "Actual prepare_split(custom); no training or implicit dataset processing",
+      "status": "passed"
+    },
+    "team": {
+      "custom_manifests_loaded": 5,
+      "scope": "Actual prepare_split(custom); no training or implicit dataset processing",
+      "status": "passed"
+    }
+  },
+  "hashed_artifacts": 37,
+  "population": {
+    "canonical_conditions": 231,
+    "control_cells": 7353,
+    "expression_genes": 5045,
+    "pairs": 128,
+    "perturbation_nodes": 9853,
+    "retained_cells": 89357,
+    "singles": 102,
+    "source_labels": 277
+  },
+  "runtime_checks_pending": [
+    "Training adapters must consume saved control schedules and gene/perturbation order",
+    "Fit and audit shared graphs; graph metadata does not contain edge tensors",
+    "Freeze batching, training budget, normalized-MSE selection and final scoring rules"
+  ],
+  "shared_control_assignments": 89357,
+  "splits": [
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 1,
+      "target_cell_counts": {
+        "test": 7214,
+        "train": 76724,
+        "val": 5419
+      }
+    },
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 2,
+      "target_cell_counts": {
+        "test": 6901,
+        "train": 74686,
+        "val": 7770
+      }
+    },
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 3,
+      "target_cell_counts": {
+        "test": 6340,
+        "train": 75199,
+        "val": 7818
+      }
+    },
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 4,
+      "target_cell_counts": {
+        "test": 8036,
+        "train": 74101,
+        "val": 7220
+      }
+    },
+    {
+      "pair_counts": {
+        "test": 26,
+        "train": 76,
+        "val": 26
+      },
+      "split_seed": 5,
+      "target_cell_counts": {
+        "test": 6803,
+        "train": 76086,
+        "val": 6468
+      }
+    }
+  ],
+  "status": "passed"
+}

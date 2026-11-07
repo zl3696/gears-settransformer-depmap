@@ -1,0 +1,35 @@
+{
+  "cell_order": "original H5AD row order",
+  "control_sampling": "One draw with replacement for each non-control target in retained source order; controls map to self; no draw for controls",
+  "control_sampling_seed": 1000,
+  "evaluation_controls": "Same fixed target-to-control assignments; one input per pair target cell; fixed across models and splits",
+  "gene_order": "Unchanged H5AD var order",
+  "pair_order": "lexicographically sorted canonical IDs",
+  "permutation_slices": {
+    "test": [
+      0,
+      26
+    ],
+    "train": [
+      52,
+      128
+    ],
+    "val": [
+      26,
+      52
+    ]
+  },
+  "perturbation_order": "Sorted default GO-covered essential genes",
+  "population": "GEARS default-GO-filtered Norman K562 CRISPRa",
+  "rng": "numpy.random.Generator(PCG64)",
+  "schema_version": 1,
+  "single_and_control_partition": "train",
+  "split_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "training_seed": 101
+}
