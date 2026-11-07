@@ -13,7 +13,7 @@ from .inference import evaluate, compute_metrics, deeper_analysis, \
 from .utils import loss_fct, uncertainty_loss_fct, parse_any_pert, \
                   get_similarity_network, print_sys, GeneSimNetwork, \
                   create_cell_graph_dataset_for_prediction, get_mean_control, \
-                  get_GI_genes_idx, get_GI_params
+                  get_GI_genes_idx, get_GI_params, set_seed
 
 torch.manual_seed(0)
 
@@ -117,7 +117,8 @@ class GEARS:
                 'uncertainty': 'whether or not to turn on uncertainty mode, default False',
                 'uncertainty_reg': 'regularization term to balance uncertainty loss and prediction loss, default 1',
                 'direction_lambda': 'regularization term to balance direction loss and prediction loss, default 1',
-                'pert_agg': "perturbation set aggregation, 'sum' or 'set_transformer', default 'sum'"
+                'pert_agg': "perturbation set aggregation, 'sum' or 'set_transformer', default 'sum'",
+                'seed': 'seed for model initialization and training batch order, default None'
                }
     
     def model_initialize(self, hidden_size = 64,
@@ -136,6 +137,7 @@ class GEARS:
                          G_coexpress_weight = None,
                          no_perturb = False,
                          pert_agg = 'sum',
+                         seed = None,
                          **kwargs
                         ):
         """
@@ -176,6 +178,9 @@ class GEARS:
         pert_agg: str
             how to aggregate the embeddings of perturbed genes: 'sum' (original
             GEARS) or 'set_transformer', default 'sum'
+        seed: int
+            seed for model initialization and training batch order, default
+            None (keep the global torch.manual_seed(0) set on import)
 
         Returns
         -------
@@ -200,7 +205,8 @@ class GEARS:
                        'num_genes': self.num_genes,
                        'num_perts': self.num_perts,
                        'no_perturb': no_perturb,
-                       'pert_agg': pert_agg
+                       'pert_agg': pert_agg,
+                       'seed': seed
                       }
         
         if self.wandb:
@@ -240,6 +246,8 @@ class GEARS:
             self.config['G_go'] = sim_network.edge_index
             self.config['G_go_weight'] = sim_network.edge_weight
             
+        if seed is not None:
+            set_seed(seed)
         self.model = GEARS_Model(self.config).to(self.device)
         self.best_model = deepcopy(self.model)
         

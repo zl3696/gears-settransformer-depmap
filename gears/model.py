@@ -157,14 +157,17 @@ class GEARS_Model(torch.nn.Module):
         self.emb_trans_v2 = MLP([hidden_size, hidden_size, hidden_size], last_layer_act='ReLU')
 
         # perturbation set aggregation: 'sum' (original GEARS) or 'set_transformer'
+        # built on a forked RNG so that, with the same seed, both variants get the
+        # same init for all shared layers and the same training batch order
         self.pert_agg = args.get('pert_agg', 'sum')
-        if self.pert_agg == 'set_transformer':
-            self.set_attention = SetAttentionBlock(hidden_size, hidden_size, num_heads=4)
-            self.set_pooling = PoolingByMultiheadAttention(hidden_size, num_heads=4)
-        elif self.pert_agg == 'sum':
-            self.pert_fuse = MLP([hidden_size, hidden_size, hidden_size], last_layer_act='ReLU')
-        else:
-            raise ValueError("pert_agg must be 'sum' or 'set_transformer'")
+        with torch.random.fork_rng(devices=[]):
+            if self.pert_agg == 'set_transformer':
+                self.set_attention = SetAttentionBlock(hidden_size, hidden_size, num_heads=4)
+                self.set_pooling = PoolingByMultiheadAttention(hidden_size, num_heads=4)
+            elif self.pert_agg == 'sum':
+                self.pert_fuse = MLP([hidden_size, hidden_size, hidden_size], last_layer_act='ReLU')
+            else:
+                raise ValueError("pert_agg must be 'sum' or 'set_transformer'")
         
         # gene co-expression GNN
         self.G_coexpress = args['G_coexpress'].to(args['device'])

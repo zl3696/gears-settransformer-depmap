@@ -12,6 +12,7 @@ import tarfile
 from sklearn.linear_model import TheilSenRegressor
 from dcor import distance_correlation
 from multiprocessing import Pool
+import random
 
 def parse_single_pert(i):
     a = i.split('+')[0]
@@ -234,6 +235,15 @@ def make_GO(data_path, pert_list, data_name, num_workers=25, save=True):
         df_edge_list.to_csv(fname, index=False)
 
     return df_edge_list
+
+def set_seed(seed):
+    """
+    Seed python, numpy and torch (CPU and CUDA) random number generators
+    """
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
 
 def get_similarity_network(network_type, adata, threshold, k,
                            data_path, data_name, split, seed, train_gene_set_size,
