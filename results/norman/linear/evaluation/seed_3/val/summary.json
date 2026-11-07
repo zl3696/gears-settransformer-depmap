@@ -1,0 +1,51 @@
+{
+  "additive_metrics": {
+    "mse": 0.0015130298417545098,
+    "mse_de": 0.03954077278705564,
+    "pearson": 0.9954855632956368,
+    "pearson_de": 0.9343912244341402
+  },
+  "artifact_sha256": {
+    "evaluation_cells.csv.gz": "243f05ef634e44b688bd9f8949f9f35502e4f55c1529f9249d423933500fa811",
+    "evaluation_config.json": "4d3a8c9cbea6647daf0fa7ef44dec96adf57425e4bc4696ee6cd226fcffd5f3c",
+    "independent_metrics_check.json": "28873ed90539d80fc5ef23602f88390bee270db86d974bf75c09aa4ce89ca627",
+    "per_condition_metrics.csv": "8bed3209f2502fbf695fa8f79bf7ebf515ace131119ee797a28c0df845efd1e4",
+    "scoring_genes.csv": "92551a83cdfde2f4e3e1ac5921bde04ad132cff0b3ca45680f3a7eb7ff7be5d7",
+    "scoring_inputs.npz": "7bd9d8bcb437e91fcc3057b0a13b9a42a637621d1bffb13e78c80a79925e6df2"
+  },
+  "configuration_sha256": "4d3a8c9cbea6647daf0fa7ef44dec96adf57425e4bc4696ee6cd226fcffd5f3c",
+  "created_at": "2026-11-07T12:40:20.486278-05:00",
+  "cross_split_exposure": "Reuse previously scored validation panels; some pairs are test in other splits. No adaptive tuning.",
+  "de_genes_per_pair": 20,
+  "difference_from_additive": {
+    "mse": 0.0030759080986996357,
+    "mse_de": 0.23763431217351916,
+    "pearson": -0.009397296387287812,
+    "pearson_de": -0.05046037980190832
+  },
+  "evaluated_cells": 7818,
+  "evaluated_pairs": 26,
+  "expression_genes": 5045,
+  "metrics": {
+    "mse": 0.0045889379404541455,
+    "mse_de": 0.2771750849605748,
+    "pearson": 0.9860882669083489,
+    "pearson_de": 0.8839308446322319
+  },
+  "model": "fitted_linear_pair_adaptation",
+  "neural_comparison_status": "No matched trained GEARS/Set Transformer predictions available locally",
+  "new_ranking_keys_decoded": 0,
+  "new_validation_expression_rows_decoded": 0,
+  "partition": "val",
+  "raw_h5ad_opened_for_scoring": false,
+  "scorer_warning_counts": {
+    "ConstantInputWarning": 1
+  },
+  "split_seed": 3,
+  "status": "validation_evaluated",
+  "test_scores_computed": false,
+  "undefined_to_zero_counts": {
+    "pearson_de_undefined_to_zero": 1,
+    "pearson_undefined_to_zero": 0
+  }
+}

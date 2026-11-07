@@ -1,0 +1,49 @@
+{
+  "additive_metrics": {
+    "mse": 0.0023909995947564355,
+    "mse_de": 0.07969469294504097,
+    "pearson": 0.9930781439994912,
+    "pearson_de": 0.9801454121714323
+  },
+  "artifact_sha256": {
+    "evaluation_cells.csv.gz": "d11c8e50ad036f9d0346fe07c16656c63a8d87672c38db83c7aa570940b877cd",
+    "evaluation_config.json": "d0e5656c69ee689f14620b289443b9180b19f7ea56b447f65492f9b960fb125d",
+    "independent_metrics_check.json": "0fd1d2a4ffc2b3aae25581cdefdd770b24132cceedddeb48e55a68f81c92f21d",
+    "per_condition_metrics.csv": "79fa01d7dd533a4c71fbede8b1e1da28dcfaeca8971a685e9b66edd7239061ad",
+    "scoring_genes.csv": "c8ecdb09dec92013f6dac177d3ce3cf28c1c27fed38c444a04ba057c73c79ba8",
+    "scoring_inputs.npz": "9a003ff8156d17bb0dae93a9bd1f111a27b6fb00a85c1f607d167495402963dd"
+  },
+  "configuration_sha256": "d0e5656c69ee689f14620b289443b9180b19f7ea56b447f65492f9b960fb125d",
+  "created_at": "2026-11-07T12:40:26.570516-05:00",
+  "cross_split_exposure": "Reuse previously scored validation panels; some pairs are test in other splits. No adaptive tuning.",
+  "de_genes_per_pair": 20,
+  "difference_from_additive": {
+    "mse": 0.0026108529341800973,
+    "mse_de": 0.1665492017292304,
+    "pearson": -0.00819680708407966,
+    "pearson_de": -0.06755152000303521
+  },
+  "evaluated_cells": 7220,
+  "evaluated_pairs": 26,
+  "expression_genes": 5045,
+  "metrics": {
+    "mse": 0.005001852528936533,
+    "mse_de": 0.24624389467427138,
+    "pearson": 0.9848813369154116,
+    "pearson_de": 0.912593892168397
+  },
+  "model": "fitted_linear_pair_adaptation",
+  "neural_comparison_status": "No matched trained GEARS/Set Transformer predictions available locally",
+  "new_ranking_keys_decoded": 0,
+  "new_validation_expression_rows_decoded": 0,
+  "partition": "val",
+  "raw_h5ad_opened_for_scoring": false,
+  "scorer_warning_counts": {},
+  "split_seed": 4,
+  "status": "validation_evaluated",
+  "test_scores_computed": false,
+  "undefined_to_zero_counts": {
+    "pearson_de_undefined_to_zero": 0,
+    "pearson_undefined_to_zero": 0
+  }
+}
