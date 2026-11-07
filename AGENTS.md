@@ -5,19 +5,13 @@
 - The Set Transformer aggregation is enabled with `pert_agg="set_transformer"`;
   the default `"sum"` path is retained. DepMap integration remains pending.
 - `splits/norman/` is the frozen shared condition-split protocol for all models.
-- The additive baseline is fitted and evaluated on all five validation/test panels;
-  matched neural accuracy comparisons remain pending.
 
 ## Development rules
 - Preserve existing model behavior unless a requested change requires otherwise.
 - Keep all aliases/cells of a condition together; every held-out pair retains
   both constituent singles in training. Fit preprocessing only on training data.
-- Keep downloaded expression data, runtime caches, checkpoints, and new runtime
-  outputs out of Git. In the local course workspace, write them under `Codex Outputs/`.
-  The explicitly requested `results/norman/additive/` is a curated, hash-verified
-  results snapshot; keep future exports deliberate and documented.
-- Preserve `scripts/norman_additive/` and its historical result hashes. Use the
-  portable entry point with an external runtime root; version numerical changes.
+- Keep downloaded expression data, runtime caches, checkpoints, and results out
+  of Git. In the local course workspace, write them under `Codex Outputs/`.
 - Treat committed split metadata as immutable protocol source; version a changed
   protocol explicitly rather than editing frozen manifests in place.
 - Keep annotations and technical documentation in English. Do not edit personal
@@ -32,10 +26,4 @@
 - `python -m unittest discover -s /absolute/repository/tests -p 'test_norman_splits.py' -v`
   runs the split regression suite from any directory.
 - [README](README.md): upstream GEARS installation and examples.
-- [Norman additive baseline](docs/norman-additive.md): fitting/scoring rules,
-  immutable source snapshot, portable verify/test/rerun commands, and dependencies.
-- [Additive baseline results](results/norman/additive/README.md): five-split
-  validation/test scores, sample statistics, artifacts, and exposure limitations.
-- `python /absolute/repository/scripts/norman_additive.py verify` validates the
-  committed export without reading expression outcomes.
-- Formal neural training/evaluation commands and the schedule-aware adapter remain TODO.
+- Formal training/evaluation commands and the schedule-aware adapter remain TODO.

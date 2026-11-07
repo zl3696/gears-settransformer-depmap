@@ -7,16 +7,8 @@ This repository hosts the official implementation of GEARS, a method that can pr
 The [Norman split workflow](docs/norman-splits.md) provides five frozen 76/26/26
 training/validation/test pair splits using seeds 1–5. All single conditions and
 controls remain in every training partition. The snapshot, portable verification
-and rebuilding script, and regression tests are included. Neural training
-integration and matched model benchmarks remain pending.
-
-### Project: additive baseline Norman
-
-The [additive baseline workflow](docs/norman-additive.md) includes training-only
-single/control means, the preserved scoring implementation, portable commands,
-and 21 regression tests. [Results](results/norman/additive/README.md) include all
-five validation and final-test panels using the same four GEARS metrics, with
-per-pair scores, sample variance/SD, provenance, and verification evidence.
+and rebuilding script, and regression tests are included; training integration
+and benchmark results remain pending.
 
 
 <p align="center"><img src="https://github.com/snap-stanford/GEARS/blob/master/img/gears.png" alt="gears" width="900px" /></p>
