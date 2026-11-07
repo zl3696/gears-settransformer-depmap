@@ -1,0 +1,71 @@
+{
+  "all_repeated_condition_arrays_match_across_validation_and_test": true,
+  "independent_numpy_metrics_match_all_test_splits": true,
+  "manual_split_metrics": [
+    {
+      "mse": 0.0018672347334840532,
+      "mse_de": 0.05542725697178635,
+      "pearson": 0.9946676385188336,
+      "pearson_de": 0.9878953870185264,
+      "split_seed": 1
+    },
+    {
+      "mse": 0.001775231845181551,
+      "mse_de": 0.06091397867664438,
+      "pearson": 0.9949252472482626,
+      "pearson_de": 0.9865967354481787,
+      "split_seed": 2
+    },
+    {
+      "mse": 0.002581732659020839,
+      "mse_de": 0.07787381405256058,
+      "pearson": 0.9928587111211231,
+      "pearson_de": 0.906335739318937,
+      "split_seed": 3
+    },
+    {
+      "mse": 0.0012811938602319548,
+      "mse_de": 0.04744195105247315,
+      "pearson": 0.9961165972779045,
+      "pearson_de": 0.9487976683050217,
+      "split_seed": 4
+    },
+    {
+      "mse": 0.0019434841089505126,
+      "mse_de": 0.05135312678239383,
+      "pearson": 0.9944347884616339,
+      "pearson_de": 0.8741536030765134,
+      "split_seed": 5
+    }
+  ],
+  "max_absolute_split_score_difference": 2.220446049250313e-16,
+  "repeated_condition_array_checks": 140,
+  "scoring_input_sha256": {
+    "seed_1/test/scoring_inputs.npz": "fca3ed654c976afabfd124ea1c084a4643e50b8065eb0486bac0897d950a089a",
+    "seed_2/test/scoring_inputs.npz": "b41fe1242f9b1735a9ef061e74da23d70c1347b3ba88fc3f4a3d92a132c15c6f",
+    "seed_3/test/scoring_inputs.npz": "8edcfebff0b71876ba93ff1e7c480765c59649a130531a5f5eb2e4f33eec828c",
+    "seed_4/test/scoring_inputs.npz": "a19cf723c2e4e0a0f76cf6e596d73d0c69d32fc20755e25c2c3927cdd15b33af",
+    "seed_5/test/scoring_inputs.npz": "8d3efa8d75f83230140fe5d30425e65ae80dd6b71aa0948bec17549630536111"
+  },
+  "source_sha256_unchanged": "23ffb0fac6a847ff927cf7509d80d85052bfefbfb97610786a2dafaaefa0b6a0",
+  "split_bundle_sha256_verified": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34",
+  "status": "passed",
+  "undefined_de_reason": "Measured mean is zero at all 20 released DE genes; unchanged GEARS rule returns zero",
+  "undefined_pearson_de_conditions_by_test_split": {
+    "1": [],
+    "2": [],
+    "3": [
+      "CBL+UBASH3A",
+      "KIF18B+KIF2C"
+    ],
+    "4": [
+      "SAMD1+TGFBR2"
+    ],
+    "5": [
+      "C3orf72+FOXL2",
+      "CBL+UBASH3A",
+      "CEBPB+JUN"
+    ]
+  },
+  "unique_scored_pairs_across_both_partitions": 120
+}
