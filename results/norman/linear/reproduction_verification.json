@@ -1,0 +1,382 @@
+{
+  "status": "passed",
+  "fresh_source_data_reproduction": true,
+  "source_sha256": "23ffb0fac6a847ff927cf7509d80d85052bfefbfb97610786a2dafaaefa0b6a0",
+  "fitted_models": 5,
+  "array_fields_checked": 115,
+  "metric_values_checked": 40,
+  "evaluation_panels": 10,
+  "aggregate_summaries": 2,
+  "completed_stages": [
+    {
+      "entry": "norman_additive.py",
+      "command": "predict",
+      "split_seed": null,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "predict",
+      "split_seed": null,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 1,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 1,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 2,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 2,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 3,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 3,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 4,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 4,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 5,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation",
+      "split_seed": 5,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation-summary",
+      "split_seed": null,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "validation-summary",
+      "split_seed": null,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 1,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 1,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 2,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 2,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 3,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 3,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 4,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 4,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 5,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test",
+      "split_seed": 5,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test-summary",
+      "split_seed": null,
+      "action": "run"
+    },
+    {
+      "entry": "norman_additive.py",
+      "command": "test-summary",
+      "split_seed": null,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 1,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 1,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 2,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 2,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 3,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 3,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 4,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 4,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 5,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "fit",
+      "split_seed": 5,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "audit",
+      "split_seed": null,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 1,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 1,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 2,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 2,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 3,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 3,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 4,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 4,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 5,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation",
+      "split_seed": 5,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation-summary",
+      "split_seed": null,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "validation-summary",
+      "split_seed": null,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 1,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 1,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 2,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 2,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 3,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 3,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 4,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 4,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 5,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test",
+      "split_seed": 5,
+      "action": "verify"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test-summary",
+      "split_seed": null,
+      "action": "run"
+    },
+    {
+      "entry": "norman_linear.py",
+      "command": "test-summary",
+      "split_seed": null,
+      "action": "verify"
+    }
+  ],
+  "numerical_rtol": 1e-10,
+  "numerical_atol": 1e-12,
+  "portable_entry_sha256": "43ed0135441edbe1b907d6606f3fadc2dae8d55ec868d1c683b69177e52031af",
+  "split_bundle_sha256": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34"
+}

@@ -1,0 +1,6 @@
+{
+  "status": "passed",
+  "modified_result_hash_rejected": true,
+  "runtime_inside_checkout_rejected": true,
+  "original_regression_tests_passed": 17
+}

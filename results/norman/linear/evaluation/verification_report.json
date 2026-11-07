@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "synthetic_tests": 13,
+  "fit_regenerations": 5,
+  "independent_fit_audits": 5,
+  "validation_regenerations": 5,
+  "independent_metric_checks": 5,
+  "aggregate_regeneration": true,
+  "protected_files_unchanged": 145,
+  "final_linear_test_scores_computed": false,
+  "all_markdown_changes_in_english": true,
+  "changed_source_files": [
+    "scripts/norman-linear/audit_linear.py",
+    "scripts/norman-linear/evaluate_linear.py",
+    "scripts/norman-linear/linear_baseline.py",
+    "scripts/norman-linear/summarize_linear.py",
+    "scripts/norman-linear/test_linear_baseline.py",
+    "scripts/norman-linear/test_linear_evaluation.py"
+  ],
+  "changed_documentation_files": [
+    "AGENTS.md",
+    "docs/norman-linear.md",
+    "docs/norman-linear-baseline-evaluation-plan.md",
+    "docs/progress.md",
+    "docs/gears-evaluation.md",
+    "docs/professor-feedback.md",
+    "docs/norman-additive-evaluation.md",
+    "docs/norman-splitting-plan.md",
+    "docs/norman-baseline-scoring.md"
+  ],
+  "new_output_roots": [
+    "outputs/norman-linear",
+    "outputs/norman-linear-evaluation"
+  ],
+  "reference": "fitted_linear_pair_adaptation"
+}

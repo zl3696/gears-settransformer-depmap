@@ -1,0 +1,12 @@
+{
+  "atol": 1e-14,
+  "method": "Direct NumPy squared error and centered-vector correlation",
+  "metrics": {
+    "mse": 0.005001852528936533,
+    "mse_de": 0.24624389467427138,
+    "pearson": 0.9848813369154107,
+    "pearson_de": 0.912593892168397
+  },
+  "rtol": 1e-12,
+  "status": "passed"
+}

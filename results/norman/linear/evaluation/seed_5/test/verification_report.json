@@ -1,0 +1,12 @@
+{
+  "identical_score_and_input_regeneration": true,
+  "metrics": {
+    "mse": 0.005609803173329963,
+    "mse_de": 0.2662907138418694,
+    "pearson": 0.9831810804460062,
+    "pearson_de": 0.7875465910185432
+  },
+  "partition": "test",
+  "split_seed": 5,
+  "status": "passed"
+}

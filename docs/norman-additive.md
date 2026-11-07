@@ -3,7 +3,8 @@
 The additive baseline is fitted and evaluated on all five frozen Norman splits.
 Validation and final test are separate; see the [results](../results/norman/additive/README.md)
 for all four metrics, per-split scores, mean/sample variance/SD, and caveats.
-Fitted-linear and matched trained GEARS/Set Transformer comparisons remain pending.
+The [fitted linear pair adaptation](norman-linear.md) is now implemented and
+evaluated separately; matched trained GEARS/Set Transformer comparisons remain pending.
 
 ## Model and scoring contract
 
@@ -16,7 +17,8 @@ and 5,045 expression genes. The [frozen splits](norman-splits.md) determine whic
 26 pairs are validation/test in each seed; never score all 128 as held out.
 
 This implements the additive formula in [Ahlmann-Eltze, Huber and Anders (2025)](https://doi.org/10.1038/s41592-025-02772-6).
-Their fitted linear model is a separate baseline and is not implemented here.
+Their fitted linear model is a separate baseline; its explicit project pair
+adaptation is described in the [linear workflow](norman-linear.md).
 
 The exact existing `compute_metrics` in `gears/inference.py` supplies:
 

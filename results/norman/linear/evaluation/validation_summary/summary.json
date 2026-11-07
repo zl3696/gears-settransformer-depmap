@@ -1,0 +1,124 @@
+{
+  "artifact_sha256": {
+    "metric_summary.csv": "53c8d9d00a46d7ea68eebe7da33d051bdc7a397a5d788a0e8f1218b8920feb99",
+    "paired_difference_summary.csv": "9ad2de48a0b5f3486501880aa79f46ee9e3b975ce5323845dfc83087c8dba9d2",
+    "paired_differences.csv": "03fdf56d9ae81e24bfdc64275051b3eaf820ca3f1de205d170ba246df9eb93a2",
+    "per_condition_metrics.csv": "4160535f3fff5fa6a70a4b4a9ea91887df7b82ca1b0a6829e54a2dfb6728acd6",
+    "split_metrics.csv": "232a75db1b66e16d969a011328ebbb3968f9b1e37dfec5c0ec4cad69f54ac13f"
+  },
+  "difference_from_additive_statistics": [
+    {
+      "mean": 0.0026982778726825844,
+      "metric": "mse",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0004387223842071233,
+      "sample_variance": 1.924773304043827e-07
+    },
+    {
+      "mean": 0.20132300597344305,
+      "metric": "mse_de",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.03426836536213936,
+      "sample_variance": 0.0011743208645930727
+    },
+    {
+      "mean": -0.008299664375738192,
+      "metric": "pearson",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0012315345740223462,
+      "sample_variance": 1.5166774070124017e-06
+    },
+    {
+      "mean": -0.06300073463345288,
+      "metric": "pearson_de",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.013095159409788648,
+      "sample_variance": 0.00017148319996777617
+    }
+  ],
+  "input_summary_sha256": {
+    "seed_1/val/evaluation_config.json": "76eaed0b69d592728fc286c9565077ada7ec48d17c51dc46db1c08bed340cd74",
+    "seed_1/val/summary.json": "33ae34034d2f37ba8d3f6a059d3dc376e0748d4b47e133b3d46e5c75d6d7e0f7",
+    "seed_1/val/verification_report.json": "ac4b62cf0e3950cb95c6287f8885f0b945ccfe79489af110c4b09216ae21073d",
+    "seed_2/val/evaluation_config.json": "764194cf583f7c33fac1a584a85000cb896908bb950608f4618cbc8863d4b678",
+    "seed_2/val/summary.json": "8c4c30821bb4e05e03a75b0893d61343f70034284601b3af863d1d0e4268c9d7",
+    "seed_2/val/verification_report.json": "4aa28c45b007c4021aa8d8fbbb72ab7a39115ed0df79dfdfee55e4a669ec3ed5",
+    "seed_3/val/evaluation_config.json": "4d3a8c9cbea6647daf0fa7ef44dec96adf57425e4bc4696ee6cd226fcffd5f3c",
+    "seed_3/val/summary.json": "6b2e9d4f3e4baed6e45e1425f490006a0bd6946bbf0e71b6f7c68a22321219fa",
+    "seed_3/val/verification_report.json": "28b1cea2ede4984861e369db595043c65240095a808dcb51dc3d08f48fec637b",
+    "seed_4/val/evaluation_config.json": "d0e5656c69ee689f14620b289443b9180b19f7ea56b447f65492f9b960fb125d",
+    "seed_4/val/summary.json": "cb670fc31586a03921cdb9801f2dc1796a3dc64a7f2a614dba48e8fa7de70443",
+    "seed_4/val/verification_report.json": "a4f900c08d48aa431f03c47f53a05f798705b80bd82e411aadc427cd9c53b0bd",
+    "seed_5/val/evaluation_config.json": "13b385e07a05b23194047e9fc0ea6de6d940fcece6dca066488218bbcda4c4a9",
+    "seed_5/val/summary.json": "0133126c137d70b428ff49a44adda0f2e929d3e7a421712a4fd3ee2adeecd9e7",
+    "seed_5/val/verification_report.json": "93da4ff5067ecb121fe964fafd933412743013a255c3a89063cf27c3ecbe5e78"
+  },
+  "interpretation": "Sample variance/SD of overlapping validation panels; not biological replication or training-seed variability",
+  "model": "fitted_linear_pair_adaptation",
+  "neural_comparison_status": "Matched trained neural predictions not available",
+  "pair_evaluations": 130,
+  "paired_difference_definition": "Linear minus additive within each matching split; negative MSE or positive Pearson favors linear",
+  "partition": "val",
+  "shared_configuration": {
+    "condition_weighting": "equal weight per pair",
+    "de_policy": "First 20 released rank_genes_groups_cov_all IDs; expression-axis membership order",
+    "mean_dtype": "float64",
+    "metrics": [
+      "mse",
+      "mse_de",
+      "pearson",
+      "pearson_de"
+    ],
+    "model": "fitted_linear_pair_adaptation",
+    "original_scorer_sha256": "744668b54fa05c0493baefad3da6fdccfa658426db5d0519b27a2d3f4f036dd7",
+    "partition": "val",
+    "runner_sha256": "9e9a0867d4d971199c32f76ee38a14e0902d49806a09bcb888e93cc12f805ad4",
+    "shared_evaluation_helper_sha256": "9e30bae5885c40a911b3ba51fa0ba9484bc90a7593e5de65f3d52d3483eb01d3",
+    "source_sha256": "23ffb0fac6a847ff927cf7509d80d85052bfefbfb97610786a2dafaaefa0b6a0",
+    "split_bundle_sha256": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34",
+    "team_scorer_sha256": "744668b54fa05c0493baefad3da6fdccfa658426db5d0519b27a2d3f4f036dd7",
+    "undefined_pearson_policy": "Use existing scorer's NaN-to-zero conversion; record affected pairs"
+  },
+  "split_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "statistics": [
+    {
+      "mean": 0.004706087024619542,
+      "metric": "mse",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0004940806050624123,
+      "sample_variance": 2.4411564429883944e-07
+    },
+    {
+      "mean": 0.26221396925032814,
+      "metric": "mse_de",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.02844986810474941,
+      "sample_variance": 0.0008093949951776377
+    },
+    {
+      "mean": 0.9857665175398929,
+      "metric": "pearson",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.001388691405422479,
+      "sample_variance": 1.9284638194942602e-06
+    },
+    {
+      "mean": 0.8648450352215381,
+      "metric": "pearson_de",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.04744395629507418,
+      "sample_variance": 0.0022509289889289094
+    }
+  ],
+  "statistics_helper_sha256": "27be7271807456a0ccfe2f877d6cb7297f04c4ff94a6e1ac6fb3c855ed522115",
+  "status": "all_five_validation_splits_evaluated",
+  "summary_script_sha256": "4cfa6bdd2cc6a3c63e5a82239550c511b108af3719bfb74bba8c4d52c284e4e2",
+  "test_scores_computed": false,
+  "unique_validation_pairs": 88
+}

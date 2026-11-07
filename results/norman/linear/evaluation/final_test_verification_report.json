@@ -1,0 +1,46 @@
+{
+  "status": "passed",
+  "partition": "test",
+  "synthetic_tests_passed": 17,
+  "new_final_boundary_tests": 4,
+  "verified_test_splits": 5,
+  "test_scoring_input_regenerations": 5,
+  "independent_metric_checks": 5,
+  "independent_metric_max_absolute_difference": 1.4432899320127035e-15,
+  "protected_existing_files_checked": 239,
+  "protected_existing_files_changed": [],
+  "refit_performed": false,
+  "hyperparameters_changed": false,
+  "raw_h5ad_opened_for_final_scoring": false,
+  "all_four_metrics_preserved": true,
+  "all_twenty_split_metric_comparisons_favor_additive": true,
+  "pair_evaluations": 130,
+  "unique_test_pairs": 88,
+  "unique_test_target_cells": 22779,
+  "new_source_files": [
+    "scripts/norman-linear/evaluate_linear_test.py",
+    "scripts/norman-linear/summarize_linear_test.py",
+    "scripts/norman-linear/test_linear_final.py"
+  ],
+  "documentation_files_changed": [
+    "AGENTS.md",
+    "docs/norman-linear.md",
+    "docs/norman-linear-test.md",
+    "docs/norman-linear-baseline-evaluation-plan.md",
+    "docs/progress.md",
+    "docs/gears-evaluation.md",
+    "docs/professor-feedback.md",
+    "docs/norman-additive-evaluation.md",
+    "docs/norman-splitting-plan.md"
+  ],
+  "new_output_paths": [
+    "outputs/norman-linear-evaluation/seed_N/test/",
+    "outputs/norman-linear-evaluation/test_summary/"
+  ],
+  "test_summary_sha256": "4b318cdbc482b2171920971f2e69aa72ac415fe7c2f01c97ab8165bba481e3a2",
+  "all_markdown_updates_in_english": true,
+  "new_linear_documentation_links_passed": true,
+  "unrelated_team_checkout_links_missing_at_final_check": [],
+  "identical_final_summary_regeneration": true,
+  "all_evaluated_pairs_preserved": true
+}

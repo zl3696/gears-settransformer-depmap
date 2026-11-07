@@ -1,0 +1,17 @@
+{
+  "additive_training_means_sha256": "25147e81b51df335fe11d8a5d8d11f1965154d02f73fc439bbb24dea875f972e",
+  "audit_script_sha256": "887e47ac9c556ede367b904181a06ddc0efae1e1c8cfbeaf07e1f693361bf3c4",
+  "held_out_outcomes_read": false,
+  "independent_pca_method": "Symmetric eigendecomposition of centered training-condition covariance",
+  "literal_pair_prediction_max_absolute_difference": 1.9984014443252818e-15,
+  "literal_two_sided_solver_coefficient_max_absolute_difference": 1.1102230246251565e-16,
+  "model_sha256": "9186a0d9472bfe6322cf944d94afce8049bda8231fec5ebf83ff1169bd2bcc14",
+  "pca_projection_max_absolute_difference": 3.710365348297273e-13,
+  "rankings_read": false,
+  "raw_h5ad_opened": false,
+  "shared_single_control_conditions_checked": 103,
+  "single_control_mean_max_absolute_difference": 0.0,
+  "split_seed": 3,
+  "status": "passed",
+  "training_means_sha256": "f7d499b73b99ce6408d44fc23d87b1341112e22813673a09a37f430f5e5cbd33"
+}

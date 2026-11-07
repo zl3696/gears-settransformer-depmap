@@ -1,0 +1,29 @@
+{
+  "artifact_sha256": {
+    "fit_cells.csv.gz": "96a2700bc8155a6eaeeeff82d1574b941551c80de0a4fd82e7241b9fc9bc2405",
+    "fit_config.json": "330a430dcd009e2471df47f9965e113a5d454e51c170cb29fdbe990ed87dee3d",
+    "model.npz": "6392bfb4b5366c2457fc20d0eacfd6c01cbf271778be891c4f1f8e3dfe42b9a0",
+    "predictions.npz": "7f3e526e42159e58338cacffd89b4089ae1490465fcc3212b5451cd46693bead",
+    "training_means.npz": "2deed46e5f47c2000816dd195d36ccaac1984e631817a08b248378d0f0a88b7f"
+  },
+  "created_at": "2026-11-07T12:39:40.774151-05:00",
+  "expression_genes": 5045,
+  "held_out_expression_rows_decoded_for_fitting": 0,
+  "model": "fitted_linear_pair_adaptation",
+  "negative_prediction_entries_preserved": 127767,
+  "pca_explained_variance_ratio_sum": 0.9943298197301931,
+  "prediction_shape": [
+    128,
+    5045
+  ],
+  "rankings_decoded_for_fitting": 0,
+  "source_sha256": "23ffb0fac6a847ff927cf7509d80d85052bfefbfb97610786a2dafaaefa0b6a0",
+  "split_bundle_sha256": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34",
+  "split_seed": 5,
+  "status": "fitted_predictions_not_scored",
+  "training_cells": 76086,
+  "training_conditions": 179,
+  "training_expression_entries_decoded": 31128945,
+  "training_pairs": 76,
+  "training_singles": 102
+}
