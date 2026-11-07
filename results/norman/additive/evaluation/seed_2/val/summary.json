@@ -1,0 +1,73 @@
+{
+  "aggregation": "Arithmetic mean of pair-level metrics, equal weight per pair",
+  "artifact_sha256": {
+    "evaluation_cells.csv.gz": "5ae10a9e0b0ede29b3a8a55211b72151af48cd7deb8415db1e13640acf191210",
+    "evaluation_config.json": "0e972b20b43e6ae084d14304d9b709aea45cd71209d6bb54914f3659282d37d1",
+    "per_condition_metrics.csv": "0cfa47bb97b30e46471aa46a360e1e434cce96cc0db7095f5aa126af6722e7b6",
+    "scoring_genes.csv": "b00a0db0b0529a2fa19568e7be8198f5b2bacbbf829cb09703dedc555ef0674d",
+    "scoring_inputs.npz": "418ed5c826890dff1f4c102431dba75eadeef899276544de63b31d47f63321e7"
+  },
+  "comparison_status": "Additive only; no trained GEARS/Set Transformer accuracy results available locally",
+  "configuration_sha256": "0e972b20b43e6ae084d14304d9b709aea45cd71209d6bb54914f3659282d37d1",
+  "created_at": "2026-11-07T12:16:54.123562-05:00",
+  "cross_split_exposure": "Validation pairs in this split may be test in other predefined splits; do not adapt later model choices to these scores",
+  "de_genes_per_pair": 20,
+  "evaluated_cells": 7770,
+  "evaluated_pairs": 26,
+  "expression_genes": 5045,
+  "metrics": {
+    "mse": 0.0019952614688102128,
+    "mse_de": 0.06757375801690264,
+    "pearson": 0.9939500855018485,
+    "pearson_de": 0.9459761817604098
+  },
+  "model": "additive",
+  "partition": "val",
+  "prior_exposure": "Dataset-wide descriptive PCA and earlier previews are recorded in the frozen split provenance",
+  "scorer_warning_counts": {
+    "ConstantInputWarning": 1
+  },
+  "split_seed": 2,
+  "status": "validation_evaluated",
+  "test_expression_rows_decoded_in_this_run": 0,
+  "test_ranking_keys_decoded_in_this_run": 0,
+  "undefined_to_zero_counts": {
+    "pearson_de_undefined_to_zero": 1,
+    "pearson_undefined_to_zero": 0
+  },
+  "validation_expression_entries_decoded": 3118602,
+  "validation_ranking_keys_decoded": [
+    "A549_BPGM+SAMD1_1+1",
+    "A549_POU3F2+CBFA2T3_1+1",
+    "A549_CBL+CNN1_1+1",
+    "A549_CBL+UBASH3B_1+1",
+    "A549_KLF1+CEBPA_1+1",
+    "A549_FOSB+CEBPB_1+1",
+    "A549_CEBPE+CNN1_1+1",
+    "A549_SET+CEBPE_1+1",
+    "A549_ZC3HAV1+CEBPE_1+1",
+    "A549_UBASH3B+CNN1_1+1",
+    "A549_DUSP9+ETS2_1+1",
+    "A549_DUSP9+KLF1_1+1",
+    "A549_DUSP9+MAPK1_1+1",
+    "A549_TGFBR2+ETS2_1+1",
+    "A549_FOXA1+HOXB9_1+1",
+    "A549_FOXF1+FOXL2_1+1",
+    "A549_IGDCC3+PRTG_1+1",
+    "A549_MAP2K6+IKZF3_1+1",
+    "A549_MAPK1+PRTG_1+1",
+    "A549_MAPK1+TGFBR2_1+1",
+    "A549_UBASH3B+OSR2_1+1",
+    "A549_PLK4+STIL_1+1",
+    "A549_SAMD1+PTPN12_1+1",
+    "A549_PTPN12+SNAI1_1+1",
+    "A549_SGK1+TBX2_1+1",
+    "A549_UBASH3B+ZBTB25_1+1"
+  ],
+  "versions": {
+    "h5py": "3.12.1",
+    "numpy": "1.26.4",
+    "scikit-learn": "1.5.1",
+    "scipy": "1.14.1"
+  }
+}

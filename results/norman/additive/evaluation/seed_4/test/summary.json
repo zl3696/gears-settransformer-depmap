@@ -1,0 +1,90 @@
+{
+  "aggregation": "Arithmetic mean of pair-level metrics, equal weight per pair",
+  "artifact_sha256": {
+    "evaluation_cells.csv.gz": "b8366f9e9b34e537bd72014c4970c69affecdcecd2301a399b22e242ed45e407",
+    "evaluation_config.json": "f29a00201de6d9182bbbf60ce29a3cedbb23d097b0855080a16279ad457749ab",
+    "per_condition_metrics.csv": "6cc72f76650961a323b9d3532dedc6c82797b815eac493a7446b5526ab225131",
+    "scoring_genes.csv": "8e162388fa9ede73a15a4a1ebca8b741fc8676ea30942fe5dbd953397bcbbf1b",
+    "scoring_inputs.npz": "a19cf723c2e4e0a0f76cf6e596d73d0c69d32fc20755e25c2c3927cdd15b33af"
+  },
+  "comparison_status": "Additive only; matched trained GEARS/Set Transformer results remain pending",
+  "configuration_sha256": "f29a00201de6d9182bbbf60ce29a3cedbb23d097b0855080a16279ad457749ab",
+  "created_at": "2026-11-07T12:31:15.531776-05:00",
+  "de_genes_per_pair": 20,
+  "evaluated_cells": 8036,
+  "evaluated_pairs": 26,
+  "expression_genes": 5045,
+  "metrics": {
+    "mse": 0.0012811938602319548,
+    "mse_de": 0.04744195105247315,
+    "pearson": 0.9961165972779044,
+    "pearson_de": 0.9487976683050217
+  },
+  "model": "additive",
+  "non_test_expression_rows_decoded_in_this_run": 0,
+  "non_test_ranking_keys_decoded_in_this_run": 0,
+  "partition": "test",
+  "prior_exposure": "Overlapping validation panels plus earlier descriptive PCA/previews; do not claim globally untouched test outcomes",
+  "prior_validation_exposed_test_conditions": [
+    "BAK1+KLF1",
+    "CBL+TGFBR2",
+    "CEBPB+MAPK1",
+    "CEBPE+SPI1",
+    "CEBPE+ZC3HAV1",
+    "CNN1+MAPK1",
+    "CNN1+UBASH3A",
+    "ELMSAN1+MAP2K3",
+    "ETS2+MAPK1",
+    "FOXF1+FOXL2",
+    "IGDCC3+MAPK1",
+    "IGDCC3+TGFBR2",
+    "IGDCC3+ZBTB25",
+    "MAP2K3+MAP2K6",
+    "PTPN12+SNAI1",
+    "UBASH3B+ZBTB25"
+  ],
+  "scorer_warning_counts": {
+    "ConstantInputWarning": 1
+  },
+  "split_seed": 4,
+  "status": "final_test_evaluated",
+  "test_expression_entries_decoded": 3313486,
+  "test_ranking_keys_decoded": [
+    "A549_KLF1+BAK1_1+1",
+    "A549_BCL2L11+TGFBR2_1+1",
+    "A549_TGFBR2+C19orf26_1+1",
+    "A549_CBL+TGFBR2_1+1",
+    "A549_CEBPB+MAPK1_1+1",
+    "A549_CEBPE+SPI1_1+1",
+    "A549_ZC3HAV1+CEBPE_1+1",
+    "A549_ETS2+CNN1_1+1",
+    "A549_CNN1+MAPK1_1+1",
+    "A549_CNN1+UBASH3A_1+1",
+    "A549_MAP2K3+ELMSAN1_1+1",
+    "A549_ETS2+MAPK1_1+1",
+    "A549_FOSB+OSR2_1+1",
+    "A549_FOSB+PTPN12_1+1",
+    "A549_FOXF1+FOXL2_1+1",
+    "A549_ZNF318+FOXL2_1+1",
+    "A549_IGDCC3+MAPK1_1+1",
+    "A549_TGFBR2+IGDCC3_1+1",
+    "A549_IGDCC3+ZBTB25_1+1",
+    "A549_SET+KLF1_1+1",
+    "A549_MAP2K3+MAP2K6_1+1",
+    "A549_PTPN12+SNAI1_1+1",
+    "A549_UBASH3B+PTPN9_1+1",
+    "A549_SAMD1+TGFBR2_1+1",
+    "A549_UBASH3B+UBASH3A_1+1",
+    "A549_UBASH3B+ZBTB25_1+1"
+  ],
+  "undefined_to_zero_counts": {
+    "pearson_de_undefined_to_zero": 1,
+    "pearson_undefined_to_zero": 0
+  },
+  "versions": {
+    "h5py": "3.12.1",
+    "numpy": "1.26.4",
+    "scikit-learn": "1.5.1",
+    "scipy": "1.14.1"
+  }
+}

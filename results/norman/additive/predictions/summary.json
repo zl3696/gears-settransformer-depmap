@@ -1,0 +1,78 @@
+{
+  "artifact_sha256": {
+    "fit_cells.csv.gz": "e6d6722321a2b81edbe178987f34df0a7fe7fb78480f512bc26d8ed5bc5bc8ca",
+    "predictions.npz": "eed3d91edc8ec7162b2d35678e22bc724a1364cf8613711bdfa18874192260ee",
+    "split_membership.csv": "8db4e3a6d791eee65856c34192e17987d1180cb802df0846008055b04a95e679",
+    "training_means.npz": "25147e81b51df335fe11d8a5d8d11f1965154d02f73fc439bbb24dea875f972e"
+  },
+  "control_cells": 7353,
+  "control_schedule": "Not sampled: condition-mean baseline does not use per-cell control inputs",
+  "created_at": "2026-11-07T11:39:39.194559-05:00",
+  "expression_policy": "Unchanged processed X; no normalization, log transform, or PCA",
+  "formula": "mu_A + mu_B - mu_control",
+  "negative_prediction_entries_preserved": 142645,
+  "pair_counts_per_split": {
+    "1": {
+      "test": 26,
+      "train": 76,
+      "val": 26
+    },
+    "2": {
+      "test": 26,
+      "train": 76,
+      "val": 26
+    },
+    "3": {
+      "test": 26,
+      "train": 76,
+      "val": 26
+    },
+    "4": {
+      "test": 26,
+      "train": 76,
+      "val": 26
+    },
+    "5": {
+      "test": 26,
+      "train": 76,
+      "val": 26
+    }
+  },
+  "pair_expression_rows_decoded": 0,
+  "prediction_reference": "Full training-control mean; one mean profile per pair",
+  "prediction_shape": [
+    128,
+    5045
+  ],
+  "prior_exposure": [
+    "Dataset-wide descriptive PCA on 24 October 2026",
+    "Earlier data preview and coverage audits; see docs/norman-data.md"
+  ],
+  "python": "3.12.14",
+  "reference": "https://doi.org/10.1038/s41592-025-02772-6",
+  "reference_code": "https://github.com/const-ae/linear_perturbation_prediction-Paper/blob/main/benchmark/src/run_additive_model.py",
+  "released_rankings_decoded": false,
+  "runner_sha256": "5118c37c97ece6320753fa1be9ec8cdcdd48c569e52b86bd8328dbb53e5359b6",
+  "scoring_status": "No validation/test scores; common evaluator and gene-ranking rules pending",
+  "shared_across_splits": "All five splits have identical fit singles/controls; predictions reused",
+  "source": "/Users/lisa/Desktop/Barnard/26 Fall/ML for Functional Genomics/ML Project /Codex Outputs/data/norman/perturb_processed.h5ad",
+  "source_sha256": "23ffb0fac6a847ff927cf7509d80d85052bfefbfb97610786a2dafaaefa0b6a0",
+  "split_bundle_sha256": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34",
+  "split_directory": "/Users/lisa/Desktop/Barnard/26 Fall/ML for Functional Genomics/ML Project /Codex Outputs/outputs/norman-splits",
+  "split_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "status": "predictions_verified_not_scored",
+  "training_cells": 54931,
+  "training_conditions": 103,
+  "training_expression_entries_decoded": 22616734,
+  "training_single_conditions": 102,
+  "versions": {
+    "h5py": "3.12.1",
+    "numpy": "1.26.4"
+  }
+}
