@@ -25,5 +25,10 @@
   rebuilds a snapshot outside the checkout; add `--temp-dir` for local scratch.
 - `python -m unittest discover -s /absolute/repository/tests -p 'test_norman_splits.py' -v`
   runs the split regression suite from any directory.
+- `scripts/norman_train.py <run_id> --data-path ... --output-root ...` trains one
+  planned run with the frozen controls, shared graphs and
+  `configs/norman_training.json`; the test set is only scored with `--test`.
+- `python -m pytest tests/test_norman_protocol.py tests/test_set_transformer.py`
+  runs the training-protocol and model checks on synthetic data.
 - [README](README.md): upstream GEARS installation and examples.
-- Formal training/evaluation commands and the schedule-aware adapter remain TODO.
+- Final test scoring, the coexpression batching policy and DepMap variants remain TODO.

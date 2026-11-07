@@ -13,6 +13,7 @@ from sklearn.linear_model import TheilSenRegressor
 from dcor import distance_correlation
 from multiprocessing import Pool
 import random
+import hashlib
 
 def parse_single_pert(i):
     a = i.split('+')[0]
@@ -244,6 +245,16 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+
+def file_sha256(path):
+    """
+    SHA-256 hex digest of a file
+    """
+    result = hashlib.sha256()
+    with open(path, 'rb') as f:
+        for block in iter(lambda: f.read(1024 * 1024), b''):
+            result.update(block)
+    return result.hexdigest()
 
 def get_similarity_network(network_type, adata, threshold, k,
                            data_path, data_name, split, seed, train_gene_set_size,

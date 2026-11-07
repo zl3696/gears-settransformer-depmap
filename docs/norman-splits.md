@@ -86,15 +86,41 @@ keep all subsequent caches, expression data, and model results outside Git.
 
 ## Training boundaries
 
-The custom GEARS interface sets condition lists only. Stock `PertData.load()`
-samples fresh controls and may reuse an unkeyed `data_pyg/cell_graphs.pkl`; it does
-not automatically consume these saved input schedules. TODO: implement a dataset
-adapter that uses the saved target/control IDs and both ordered axes.
+Training settings live in `configs/norman_training.json`, outside the frozen
+snapshot. It pins the snapshot by bundle and `config.json` digests and freezes:
 
-TODO: fit shared graph edges, settle the coexpression batching policy, freeze the
-training budget and scoring definitions, and implement validation normalized-MSE
-checkpoint selection. Keep test loaders out of development training. No graph
-fitting, training, or benchmark results are part of this change.
+- training seed 101 for every model and split (`model_initialize(seed=...)`);
+- GEARS default budget: 20 epochs, lr 1e-3, weight decay 5e-4, StepLR gamma 0.5,
+  batch size 32;
+- GEARS default graphs: coexpression k=20 and threshold 0.4, default GO graph
+  with k=20;
+- checkpoint selection on validation normalized MSE: for each validation pair,
+  MSE(predicted mean, true mean) / MSE(control mean, true mean) over its top 20
+  DE genes, averaged over pairs. Values below 1 beat predicting no change.
+
+`PertData.load(data_name="norman", frozen_split_dir=...)` checks the
+expression-gene, perturbation-node and retained-cell order and the file hashes
+against this snapshot, then pairs every target with its saved control from
+`control_assignments.csv.gz`, for training and evaluation alike. The cell-graph
+cache is keyed by that file's digest, so a random-control `cell_graphs.pkl` is
+never reused. `prepare_split(split="custom", seed=N)` then reads
+`seed_N/gears_custom_split.pkl`.
+
+`scripts/norman_train.py <run_id>` runs one `planned_runs.csv` row (currently
+`gears` and `gears_set_transformer`). It fits the coexpression graph on the
+training controls and singles, checks the fit population against
+`graph_metadata.json`, saves both graphs with tensor digests per split, and
+reuses them for every model. `GEARS.train(selection_metric="normalized_mse_de",
+run_test=False)` keeps the test loader out of training; `--test` (or
+`GEARS.test()`) evaluates the selected checkpoint afterwards.
+
+```bash
+python "$repo_dir/scripts/norman_train.py" gears_split1_train101 \
+    --data-path "$runtime_dir/data" --output-root "$runtime_dir"
+```
+
+TODO: settle the coexpression batching policy and the final test scoring
+definitions, and add the DepMap variants.
 
 Fit any new preprocessing/graphs/loss masks on permitted training observations.
 Keep held-out outcomes and their rankings out of model inputs and tuning. The

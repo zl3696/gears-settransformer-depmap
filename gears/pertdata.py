@@ -2,8 +2,10 @@ from torch_geometric.data import Data
 import torch
 import numpy as np
 import pickle
+import json
 from torch_geometric.data import DataLoader
 import os
+import pandas as pd
 import scanpy as sc
 from tqdm import tqdm
 
@@ -13,7 +15,8 @@ sc.settings.verbosity = 0
 
 from .data_utils import get_DE_genes, get_dropout_non_zero_genes, DataSplitter
 from .utils import print_sys, zip_data_download_wrapper, dataverse_download,\
-                  filter_pert_in_go, get_genes_from_perts, tar_data_download_wrapper
+                  filter_pert_in_go, get_genes_from_perts, tar_data_download_wrapper,\
+                  file_sha256
 
 class PertData:
     """
@@ -81,6 +84,10 @@ class PertData:
         self.gene_names = []
         self.node_map = {}
 
+        # Frozen split protocol attributes
+        self.frozen_split_dir = None
+        self.control_rows = None
+
         # Split attributes
         self.split = None
         self.seed = None
@@ -128,7 +135,7 @@ class PertData:
         self.pert_names = np.unique(list(gene2go.keys()))
         self.node_map_pert = {x: it for it, x in enumerate(self.pert_names)}
             
-    def load(self, data_name = None, data_path = None):
+    def load(self, data_name = None, data_path = None, frozen_split_dir = None):
         """
         Load existing dataloader
         Use data_name for loading 'norman', 'adamson', 'dixit' datasets
@@ -140,6 +147,10 @@ class PertData:
             Name of dataset
         data_path: str
             Path to dataset
+        frozen_split_dir: str
+            Path to a frozen split snapshot (e.g. splits/norman). If given, the
+            gene and perturbation order are checked against it, and each cell is
+            paired with its saved control instead of a random one
 
         Returns
         -------
@@ -196,6 +207,12 @@ class PertData:
         if not os.path.exists(pyg_path):
             os.mkdir(pyg_path)
         dataset_fname = os.path.join(pyg_path, 'cell_graphs.pkl')
+        if frozen_split_dir is not None:
+            # key the cache by the control assignments, so random-control
+            # cell graphs are never reused for the frozen protocol
+            control_sha256 = self.load_frozen_protocol(frozen_split_dir)
+            dataset_fname = os.path.join(pyg_path, 'cell_graphs_frozen_' +
+                                         control_sha256[:16] + '.pkl')
                 
         if os.path.isfile(dataset_fname):
             print_sys("Local copy of pyg dataset is detected. Loading...")
@@ -212,6 +229,54 @@ class PertData:
             pickle.dump(self.dataset_processed, open(dataset_fname, "wb"))    
             print_sys("Done!")
             
+    def load_frozen_protocol(self, split_dir):
+        """
+        Check the loaded data against a frozen split snapshot and read its
+        saved control assignments
+
+        Parameters
+        ----------
+        split_dir: str
+            Path to the frozen split snapshot (e.g. splits/norman)
+
+        Returns
+        -------
+        str
+            SHA-256 of the control assignment file
+
+        """
+        with open(os.path.join(split_dir, 'freeze.json')) as f:
+            frozen_sha256 = json.load(f)['artifact_sha256']
+
+        def read_frozen_csv(name):
+            path = os.path.join(split_dir, name)
+            if file_sha256(path) != frozen_sha256[name]:
+                raise ValueError(name + ' does not match freeze.json')
+            # keep gene names such as 'NA' as strings
+            return pd.read_csv(path, dtype=str, keep_default_na=False)
+
+        genes = read_frozen_csv('expression_genes.csv')
+        if list(self.adata.var['gene_name']) != genes['gene_name'].tolist():
+            raise ValueError('Expression gene order differs from expression_genes.csv')
+
+        perts = read_frozen_csv('perturbation_nodes.csv')
+        if list(self.pert_names) != perts['gene_name'].tolist():
+            raise ValueError('Perturbation gene order differs from perturbation_nodes.csv')
+
+        cells = read_frozen_csv('cells.csv.gz')
+        if list(self.adata.obs_names) != cells['cell_id'].tolist() or \
+           list(self.adata.obs['condition']) != cells['source_condition'].tolist():
+            raise ValueError('Retained cells or their order differ from cells.csv.gz')
+
+        controls = read_frozen_csv('control_assignments.csv.gz')
+        if controls['target_cell_id'].tolist() != cells['cell_id'].tolist():
+            raise ValueError('Control assignments do not follow the cell order')
+        row_of_cell = {c: i for i, c in enumerate(self.adata.obs_names)}
+        self.control_rows = np.array([row_of_cell[c] for c in controls['control_cell_id']])
+
+        self.frozen_split_dir = split_dir
+        return frozen_sha256['control_assignments.csv.gz']
+
     def new_data_process(self, dataset_name,
                          adata = None,
                          skip_calc_de = False):
@@ -301,6 +366,8 @@ class PertData:
         split_dict_path: str
             Path to dictionary used for custom split. Sample format:
                 {'train': [X, Y], 'val': [P, Q], 'test': [Z]}
+            Defaults to seed_<seed>/gears_custom_split.pkl of the frozen
+            split snapshot when load() was given frozen_split_dir
 
         Returns
         -------
@@ -317,6 +384,10 @@ class PertData:
         self.subgroup = None
         
         if split == 'custom':
+            if split_dict_path is None and self.frozen_split_dir is not None:
+                split_dict_path = os.path.join(self.frozen_split_dir,
+                                               'seed_' + str(seed),
+                                               'gears_custom_split.pkl')
             try:
                 with open(split_dict_path, 'rb') as f:
                     self.set2conditions = pickle.load(f)
@@ -575,12 +646,19 @@ class PertData:
                 np.array(de_genes[pert_de_category][:num_de_genes])))[0]
             else:
                 de_idx = [-1] * num_de_genes
-            for cell_z in adata_.X:
-                # Use samples from control as basal expression
-                ctrl_samples = self.ctrl_adata[np.random.randint(0,
-                                        len(self.ctrl_adata), num_samples), :]
-                for c in ctrl_samples.X:
-                    Xs.append(c)
+            if self.control_rows is None:
+                for cell_z in adata_.X:
+                    # Use samples from control as basal expression
+                    ctrl_samples = self.ctrl_adata[np.random.randint(0,
+                                            len(self.ctrl_adata), num_samples), :]
+                    for c in ctrl_samples.X:
+                        Xs.append(c)
+                        ys.append(cell_z)
+            else:
+                # Use the saved control of each cell from the frozen protocol
+                rows = np.where(split_adata.obs['condition'] == pert_category)[0]
+                for row, cell_z in zip(rows, adata_.X):
+                    Xs.append(split_adata.X[self.control_rows[row]])
                     ys.append(cell_z)
 
         # When considering a control perturbation

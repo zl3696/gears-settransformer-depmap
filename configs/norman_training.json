@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "split_dir": "splits/norman",
+  "split_bundle_sha256": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34",
+  "split_configuration_sha256": "ae25a8afa62d7c79f62d43130e8cd5c87a9aae1c2a5a4c323a924eaeb3ca3d1d",
+  "training_seed": 101,
+  "models": {
+    "gears": {"pert_agg": "sum"},
+    "gears_set_transformer": {"pert_agg": "set_transformer"}
+  },
+  "model": {
+    "hidden_size": 64,
+    "num_go_gnn_layers": 1,
+    "num_gene_gnn_layers": 1,
+    "decoder_hidden_size": 16,
+    "uncertainty": false,
+    "direction_lambda": 0.1
+  },
+  "graphs": {
+    "coexpress_threshold": 0.4,
+    "num_similar_genes_co_express_graph": 20,
+    "num_similar_genes_go_graph": 20,
+    "default_pert_graph": true
+  },
+  "training": {
+    "epochs": 20,
+    "lr": 0.001,
+    "weight_decay": 0.0005,
+    "scheduler": "StepLR(step_size=1, gamma=0.5), fixed in GEARS.train",
+    "batch_size": 32,
+    "test_batch_size": 128
+  },
+  "checkpoint_selection": {
+    "metric": "normalized_mse_de",
+    "definition": "For each validation pair, MSE(predicted mean, true mean) / MSE(control mean, true mean) over that pair's top 20 DE genes, averaged over pairs; the epoch with the lowest value is kept"
+  },
+  "pending": [
+    "Final test scoring definitions",
+    "Coexpression batching policy",
+    "DepMap model variants"
+  ]
+}

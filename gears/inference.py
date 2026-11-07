@@ -19,6 +19,7 @@ def evaluate(loader, model, uncertainty, device):
     truth = []
     pred_de = []
     truth_de = []
+    de_idx_list = []
     results = {}
     logvar = []
     
@@ -41,6 +42,7 @@ def evaluate(loader, model, uncertainty, device):
             for itr, de_idx in enumerate(batch.de_idx):
                 pred_de.append(p[itr, de_idx])
                 truth_de.append(t[itr, de_idx])
+                de_idx_list.append(de_idx)
 
     # all genes
     results['pert_cat'] = np.array(pert_cat)
@@ -53,6 +55,7 @@ def evaluate(loader, model, uncertainty, device):
     truth_de = torch.stack(truth_de)
     results['pred_de']= pred_de.detach().cpu().numpy()
     results['truth_de']= truth_de.detach().cpu().numpy()
+    results['de_idx'] = np.array(de_idx_list)
     
     if uncertainty:
         results['logvar'] = torch.stack(logvar).detach().cpu().numpy()
@@ -117,6 +120,31 @@ def compute_metrics(results):
         metrics[m + '_de'] = np.mean(metrics[m + '_de'])
     
     return metrics, metrics_pert
+
+
+def normalized_mse_de(results, ctrl_expression):
+    """
+    Normalized MSE on the top 20 DE genes: for each non-control perturbation,
+    MSE(pred, truth) / MSE(ctrl, truth) of the mean expression over its cells,
+    averaged over perturbations. Below 1 is better than predicting no change.
+
+    Parameters
+    ----------
+    results: dict
+        output of evaluate
+    ctrl_expression: np.ndarray
+        mean control expression over all genes
+    """
+    ratios = []
+    for pert in np.unique(results['pert_cat']):
+        if pert == 'ctrl':
+            continue
+        p_idx = np.where(results['pert_cat'] == pert)[0]
+        truth_de = results['truth_de'][p_idx].mean(0)
+        pred_de = results['pred_de'][p_idx].mean(0)
+        ctrl_de = ctrl_expression[results['de_idx'][p_idx[0]]]
+        ratios.append(mse(truth_de, pred_de) / mse(truth_de, ctrl_de))
+    return np.mean(ratios)
 
 
 def non_zero_analysis(adata, test_res):

@@ -9,7 +9,7 @@ from torch.optim.lr_scheduler import StepLR
 
 from .model import GEARS_Model
 from .inference import evaluate, compute_metrics, deeper_analysis, \
-                  non_dropout_analysis
+                  non_dropout_analysis, normalized_mse_de
 from .utils import loss_fct, uncertainty_loss_fct, parse_any_pert, \
                   get_similarity_network, print_sys, GeneSimNetwork, \
                   create_cell_graph_dataset_for_prediction, get_mean_control, \
@@ -491,7 +491,9 @@ class GEARS:
     
     def train(self, epochs = 20, 
               lr = 1e-3,
-              weight_decay = 5e-4
+              weight_decay = 5e-4,
+              selection_metric = 'mse_de',
+              run_test = True
              ):
         """
         Train the model
@@ -504,6 +506,11 @@ class GEARS:
             learning rate
         weight_decay: float
             weight decay
+        selection_metric: str
+            validation metric (lower is better) used to keep the best model:
+            'mse_de' (original GEARS) or 'normalized_mse_de'
+        run_test: bool
+            whether to evaluate the best model on the test set after training
 
         Returns
         -------
@@ -511,6 +518,9 @@ class GEARS:
 
         """
         
+        if selection_metric not in ['mse_de', 'normalized_mse_de']:
+            raise ValueError("selection_metric must be 'mse_de' or 'normalized_mse_de'")
+
         train_loader = self.dataloader['train_loader']
         val_loader = self.dataloader['val_loader']
             
@@ -520,6 +530,9 @@ class GEARS:
         scheduler = StepLR(optimizer, step_size=1, gamma=0.5)
 
         min_val = np.inf
+        ctrl_expression = self.ctrl_expression.cpu().numpy()
+        self.val_history = []
+        self.best_epoch = None
         print_sys('Start Training...')
 
         for epoch in range(epochs):
@@ -561,6 +574,9 @@ class GEARS:
                                  self.config['uncertainty'], self.device)
             train_metrics, _ = compute_metrics(train_res)
             val_metrics, _ = compute_metrics(val_res)
+            val_metrics['normalized_mse_de'] = normalized_mse_de(val_res, ctrl_expression)
+            self.val_history.append({m: float(val_metrics[m]) for m in
+                                     ['mse', 'mse_de', 'normalized_mse_de']})
 
             # Print epoch performance
             log = "Epoch {}: Train Overall MSE: {:.4f} " \
@@ -573,6 +589,8 @@ class GEARS:
                   "Validation Top 20 DE MSE: {:.4f}. "
             print_sys(log.format(train_metrics['mse_de'],
                              val_metrics['mse_de']))
+            print_sys("Validation Top 20 DE normalized MSE: {:.4f}".format(
+                      val_metrics['normalized_mse_de']))
             
             if self.wandb:
                 metrics = ['mse', 'pearson']
@@ -582,12 +600,26 @@ class GEARS:
                                'train_de_' + m: train_metrics[m + '_de'],
                                'val_de_'+m: val_metrics[m + '_de']})
                
-            if val_metrics['mse_de'] < min_val:
-                min_val = val_metrics['mse_de']
+            if val_metrics[selection_metric] < min_val:
+                min_val = val_metrics[selection_metric]
                 best_model = deepcopy(self.model)
+                self.best_epoch = epoch + 1
                 
         print_sys("Done!")
         self.best_model = best_model
+
+        if run_test:
+            self.test()
+
+    def test(self):
+        """
+        Evaluate the best model on the test set
+
+        Returns
+        -------
+        None
+
+        """
 
         if 'test_loader' not in self.dataloader:
             print_sys('Done! No test dataloader detected.')
