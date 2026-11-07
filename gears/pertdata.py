@@ -6,6 +6,7 @@ import json
 from torch_geometric.data import DataLoader
 import os
 import pandas as pd
+from scipy.sparse import issparse
 import scanpy as sc
 from tqdm import tqdm
 
@@ -623,7 +624,10 @@ class PertData:
 
         """
 
-        num_de_genes = 20        
+        if self.control_rows is not None:
+            return self._frozen_cell_graph_dataset(split_adata, pert_category)
+
+        num_de_genes = 20
         adata_ = split_adata[split_adata.obs['condition'] == pert_category]
         if 'rank_genes_groups_cov_all' in adata_.uns:
             de_genes = adata_.uns['rank_genes_groups_cov_all']
@@ -676,6 +680,52 @@ class PertData:
                                 y.toarray(), de_idx, pert_category, pert_idx))
 
         return cell_graphs
+
+    def _frozen_cell_graph_dataset(self, split_adata, pert_category):
+        """
+        Cell graphs for one condition under the frozen protocol.
+
+        Slices the condition's cells and their saved controls from the
+        expression matrix as whole blocks, instead of reading one AnnData
+        view row at a time. The cell order, controls, DE genes and values
+        are the same as in the row-by-row loop of create_cell_graph_dataset.
+        """
+        cache = getattr(self, '_frozen_matrix_cache', None)
+        if cache is None or cache[0] is not split_adata:
+            X = split_adata.X
+            X = X.tocsr() if issparse(X) else np.asarray(X)
+            conditions = np.asarray(split_adata.obs['condition'])
+            self._frozen_matrix_cache = (split_adata, X, conditions)
+        _, X, conditions = self._frozen_matrix_cache
+
+        def dense(block):
+            return block.toarray() if issparse(block) else np.asarray(block)
+
+        rows = np.where(conditions == pert_category)[0]
+        num_de_genes = 20
+        de = 'rank_genes_groups_cov_all' in split_adata.uns
+        if not de:
+            num_de_genes = 1
+
+        ys = dense(X[rows])
+        if pert_category != 'ctrl':
+            pert_idx = self.get_pert_idx(pert_category)
+            pert_de_category = split_adata.obs['condition_name'].iloc[rows[0]]
+            if de:
+                de_genes = split_adata.uns['rank_genes_groups_cov_all']
+                de_idx = np.where(split_adata.var_names.isin(
+                    np.array(de_genes[pert_de_category][:num_de_genes])))[0]
+            else:
+                de_idx = [-1] * num_de_genes
+            xs = dense(X[self.control_rows[rows]])
+        else:
+            pert_idx = None
+            de_idx = [-1] * num_de_genes
+            xs = ys
+
+        return [self.create_cell_graph(xs[i:i + 1], ys[i:i + 1], de_idx,
+                                       pert_category, pert_idx)
+                for i in range(len(rows))]
 
     def create_dataset_file(self):
         """
