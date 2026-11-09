@@ -88,13 +88,15 @@ keep all subsequent caches, expression data, and model results outside Git.
 
 The custom GEARS interface sets condition lists only. Stock `PertData.load()`
 samples fresh controls and may reuse an unkeyed `data_pyg/cell_graphs.pkl`; it does
-not automatically consume these saved input schedules. TODO: implement a dataset
-adapter that uses the saved target/control IDs and both ordered axes.
+not automatically consume these saved input schedules. The [matched neural test
+adapter](norman-neural-test.md) consumes them explicitly and checks both ordered
+axes without invoking stock all-cell graph preprocessing.
 
-TODO: fit shared graph edges, settle the coexpression batching policy, freeze the
-training budget and scoring definitions, and implement validation normalized-MSE
-checkpoint selection. Keep test loaders out of development training. No graph
-fitting, training, or benchmark results are part of this change.
+The published neural checkpoints include graph tensors and training records for
+the frozen splits. Their training budget, validation selection and retained
+batching policy are recorded in the [neural test workflow](norman-neural-test.md).
+Split preparation itself does not fit graphs or train models. Keep test loaders
+out of adaptive development training.
 
 Fit any new preprocessing/graphs/loss masks on permitted training observations.
 Keep held-out outcomes and their rankings out of model inputs and tuning. The
