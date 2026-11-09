@@ -2,8 +2,9 @@
 
 ## Overview
 - `gears/` contains the GEARS model, data interface, training, and evaluation code.
-- The Set Transformer aggregation is enabled with `pert_agg="set_transformer"`;
-  the default `"sum"` path is retained. DepMap integration remains pending.
+- Aggregation is selected with `pert_agg`: `"sum"`, `"set_transformer"`
+  (replacement), or `"residual_set_transformer"` (original fusion plus a
+  zero-initialized attention correction). DepMap integration remains pending.
 - `splits/norman/` is the frozen shared condition-split protocol for all models.
 - New models use corrected shared coexpression batching. Historical checkpoints
   without a batching setting load in legacy mode; never silently reinterpret them.
@@ -33,7 +34,7 @@
 - `scripts/norman_train.py <run_id> --data-path ... --output-root ...` trains one
   planned run with the frozen controls, shared graphs and
   `configs/norman_training.json`; the test set is only scored with `--test`.
-- `python -m pytest tests/test_norman_protocol.py tests/test_set_transformer.py tests/test_coexpression_batching.py`
+- `PYTHONPATH=/absolute/repository python -m pytest /absolute/repository/tests`
   runs the training-protocol and model checks on synthetic data.
 - [README](README.md): upstream GEARS installation and examples.
 - Final test scoring and DepMap variants remain TODO.

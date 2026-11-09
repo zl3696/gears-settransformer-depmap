@@ -117,7 +117,7 @@ class GEARS:
                 'uncertainty': 'whether or not to turn on uncertainty mode, default False',
                 'uncertainty_reg': 'regularization term to balance uncertainty loss and prediction loss, default 1',
                 'direction_lambda': 'regularization term to balance direction loss and prediction loss, default 1',
-                'pert_agg': "perturbation set aggregation, 'sum' or 'set_transformer', default 'sum'",
+                'pert_agg': "'sum', 'set_transformer', or 'residual_set_transformer'; default 'sum'",
                 'seed': 'seed for model initialization and training batch order, default None',
                 'coexpression_batching': "'shared' for corrected batching or 'legacy' for historical checkpoints"
                }
@@ -179,7 +179,9 @@ class GEARS:
             predict no perturbation condition, default False
         pert_agg: str
             how to aggregate the embeddings of perturbed genes: 'sum' (original
-            GEARS) or 'set_transformer', default 'sum'
+            GEARS), 'set_transformer' (replacement), or
+            'residual_set_transformer' (original fusion plus attention correction).
+            Default 'sum'.
         seed: int
             seed for model initialization and training batch order, default
             None (keep the global torch.manual_seed(0) set on import)

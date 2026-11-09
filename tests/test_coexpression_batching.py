@@ -15,7 +15,7 @@ def corrected_model(aggregation, layers=1):
     return model_module.GEARS_Model(args).eval()
 
 
-@pytest.mark.parametrize('aggregation', ['sum', 'set_transformer'])
+@pytest.mark.parametrize('aggregation', ['sum', 'set_transformer', 'residual_set_transformer'])
 @pytest.mark.parametrize('layers', [0, 1, 2])
 def test_predictions_ignore_batch_position_and_size(aggregation, layers):
     model = corrected_model(aggregation, layers)
@@ -29,7 +29,7 @@ def test_predictions_ignore_batch_position_and_size(aggregation, layers):
     torch.testing.assert_close(separate, together, atol=2e-6, rtol=1e-5)
 
 
-@pytest.mark.parametrize('aggregation', ['sum', 'set_transformer'])
+@pytest.mark.parametrize('aggregation', ['sum', 'set_transformer', 'residual_set_transformer'])
 @pytest.mark.parametrize('train_mode', [False, True])
 def test_matches_explicit_disconnected_graphs_and_gradients(aggregation, train_mode):
     # Independent reference: repeat the embeddings AND offset all edges for

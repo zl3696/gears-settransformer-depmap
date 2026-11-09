@@ -25,16 +25,50 @@ training outputs. Do not interpret the correction as removing BatchNorm.
   `model_initialize` or pass the setting explicitly.
 - Retrain corrected models; old weights and metrics are not corrected results.
 - `pert_agg="sum"` keeps original sum-plus-MLP fusion; `"set_transformer"`
-  uses the existing attention replacement. Both use the same batching policy.
+  uses the existing attention replacement. `"residual_set_transformer"` keeps
+  original fusion and adds the correction described below. All three use the
+  same batching policy.
 - `fix/coexpression-batching` starts from `set-transformer` at `b2390d2`.
   The original GEARS reference is `master` at `f374e43`.
+- `feature/residual-set-transformer` starts from the tested batching correction
+  at `c154fa1`. Run all three comparison models from this second branch/commit;
+  branches organize development, configuration selects the experiment.
 
 `configs/norman_runs.csv` lists corrected runs, selected by
 `configs/norman_training.json`. They write to
-`outputs/norman-benchmark/coexpression_shared_v1/<run_id>/` under the external
+`outputs/norman-benchmark/residual_comparison_v1/<run_id>/` under the external
 output root. The frozen `splits/norman/planned_runs.csv` and its hashes remain
 unchanged. Splits, controls, graph fitting, training seed 101, training budget
 and validation checkpoint selection are shared; see [Norman splits](norman-splits.md).
+The first branch's outputs use `coexpression_shared_v1`; historical outputs
+have neither namespace. The current plan contains 15 runs: three modes × five
+splits. Retrain all three with this plan for the controlled comparison.
+
+## Residual Set Transformer
+
+For a nonempty set of GO-updated perturbation embeddings `H`, the new mode is:
+
+```text
+original = pert_fuse(sum(H))
+correction = W * PMA(SAB(H)) + b
+combined = original + correction
+```
+
+`W` and `b` start at zero. The original fusion and all shared model layers have
+the same seeded initialization as `sum`, so initial predictions and shared-layer
+gradients agree. The projection learns on the first optimizer step; attention
+receives gradients after that projection becomes nonzero. Do not additionally
+zero a multiplicative gate, which would block learning of both paths.
+
+Attention uses the existing four-head SAB/PMA modules and padding mask. Singles
+and pairs receive learned corrections; controls bypass both aggregation paths.
+The entire model trains jointly; this is not a frozen GEARS checkpoint adapter.
+The decoder, loss, GO graph weights and coexpression multiplier are unchanged.
+The original replacement mode remains available as the second comparison arm.
+
+Checkpoint configuration records `pert_agg`; projection and attention weights
+are saved in `model.pt`. Existing `sum` and replacement checkpoints retain their
+parameter names and behavior. No DepMap features are used in these experiments.
 
 ## Checks and commands
 
@@ -55,6 +89,11 @@ disconnected-graph reference in training/evaluation with gradient comparisons,
 historical output compatibility, checkpoint loading/re-saving, masks and
 validation-only checkpoint selection. They establish implementation behavior;
 full Norman retraining is required to measure predictive performance.
+Residual checks also cover equality to original fusion at initialization,
+projection/attention learning, control bypass, order/padding invariance with an
+active correction, and save/load with nonzero residual weights. All three modes
+undergo short synthetic training with validation checkpoint selection and a
+test loader that fails if training accesses it.
 
 The batch launcher reads the current run plan, supports `--models`/`--splits`,
 and skips only completed runs with matching protocol hashes and checkpoints.

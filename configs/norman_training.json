@@ -7,7 +7,8 @@
   "training_seed": 101,
   "models": {
     "gears": {"pert_agg": "sum"},
-    "gears_set_transformer": {"pert_agg": "set_transformer"}
+    "gears_set_transformer": {"pert_agg": "set_transformer"},
+    "gears_residual_set_transformer": {"pert_agg": "residual_set_transformer"}
   },
   "model": {
     "hidden_size": 64,

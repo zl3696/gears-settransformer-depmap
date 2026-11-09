@@ -107,7 +107,7 @@ never reused. `prepare_split(split="custom", seed=N)` then reads
 `seed_N/gears_custom_split.pkl`.
 
 `scripts/norman_train.py <run_id>` runs one `configs/norman_runs.csv` row (currently
-`gears` and `gears_set_transformer`). It fits the coexpression graph on the
+`gears`, `gears_set_transformer`, and `gears_residual_set_transformer`). It fits the coexpression graph on the
 training controls and singles, checks the fit population against
 `graph_metadata.json`, saves both graphs with tensor digests per split, and
 reuses them for every model. `GEARS.train(selection_metric="normalized_mse_de",

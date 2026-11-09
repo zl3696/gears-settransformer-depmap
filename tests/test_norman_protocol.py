@@ -192,8 +192,9 @@ def make_gears(pert_agg='sum', **model_options):
     return model
 
 
-def test_train_selects_on_normalized_mse_without_test():
-    model = make_gears()
+@pytest.mark.parametrize('aggregation', ['sum', 'set_transformer', 'residual_set_transformer'])
+def test_train_selects_on_normalized_mse_without_test(aggregation):
+    model = make_gears(aggregation)
     model.train(epochs=3, selection_metric='normalized_mse_de', run_test=False)
 
     assert len(model.val_history) == 3
@@ -206,11 +207,15 @@ def test_unknown_selection_metric_is_rejected():
     expect_value_error(lambda: model.train(epochs=1, selection_metric='pearson'))
 
 
-@pytest.mark.parametrize('aggregation', ['sum', 'set_transformer'])
+@pytest.mark.parametrize('aggregation', ['sum', 'set_transformer', 'residual_set_transformer'])
 @pytest.mark.parametrize('policy', ['shared', 'legacy', 'missing'])
 def test_checkpoint_preserves_batching_policy(tmp_path, aggregation, policy):
     chosen = 'legacy' if policy == 'missing' else policy
     original = make_gears(aggregation, coexpression_batching=chosen)
+    if aggregation == 'residual_set_transformer':
+        # Round-trip an active correction, not just its initial all-zero state.
+        with torch.no_grad():
+            original.best_model.set_residual_projection.weight.normal_(std=0.1)
     batch = next(iter(original.dataloader['val_loader']))
     # save_model saves best_model, as it does after training.
     original.best_model.eval()

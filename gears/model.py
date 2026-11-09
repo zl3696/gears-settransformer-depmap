@@ -161,18 +161,27 @@ class GEARS_Model(torch.nn.Module):
         self.transform = nn.ReLU()
         self.emb_trans_v2 = MLP([hidden_size, hidden_size, hidden_size], last_layer_act='ReLU')
 
-        # perturbation set aggregation: 'sum' (original GEARS) or 'set_transformer'
+        # Perturbation aggregation: original fusion, attention replacement, or
+        # original fusion plus a learned attention residual.
         # built on a forked RNG so that, with the same seed, both variants get the
         # same init for all shared layers and the same training batch order
         self.pert_agg = args.get('pert_agg', 'sum')
+        if self.pert_agg not in ('sum', 'set_transformer', 'residual_set_transformer'):
+            raise ValueError("pert_agg must be 'sum', 'set_transformer' or 'residual_set_transformer'")
         with torch.random.fork_rng(devices=[]):
-            if self.pert_agg == 'set_transformer':
+            if self.pert_agg in ('sum', 'residual_set_transformer'):
+                # Initialize this first so residual and sum share the exact
+                # original fusion weights under the same seed.
+                self.pert_fuse = MLP([hidden_size, hidden_size, hidden_size], last_layer_act='ReLU')
+            if self.pert_agg in ('set_transformer', 'residual_set_transformer'):
                 self.set_attention = SetAttentionBlock(hidden_size, hidden_size, num_heads=4)
                 self.set_pooling = PoolingByMultiheadAttention(hidden_size, num_heads=4)
-            elif self.pert_agg == 'sum':
-                self.pert_fuse = MLP([hidden_size, hidden_size, hidden_size], last_layer_act='ReLU')
-            else:
-                raise ValueError("pert_agg must be 'sum' or 'set_transformer'")
+            if self.pert_agg == 'residual_set_transformer':
+                self.set_residual_projection = nn.Linear(hidden_size, hidden_size)
+                # Only the output projection is zeroed: it learns immediately,
+                # then passes gradients into attention after its first update.
+                nn.init.zeros_(self.set_residual_projection.weight)
+                nn.init.zeros_(self.set_residual_projection.bias)
         
         # gene co-expression GNN
         self.G_coexpress = args['G_coexpress'].to(args['device'])
@@ -221,6 +230,25 @@ class GEARS_Model(torch.nn.Module):
         if self.uncertainty:
             self.uncertainty_w = MLP([hidden_size, hidden_size*2, hidden_size, 1], last_layer_act='linear')
         
+    def _aggregate_set(self, pert_global_emb, pert_index):
+        """Pool nonempty perturbation sets; controls never enter attention."""
+        pert_sets = {}
+        for sample, pert in zip(pert_index[0].tolist(), pert_index[1].tolist()):
+            pert_sets.setdefault(sample, []).append(pert)
+
+        samples = list(pert_sets.keys())
+        max_set_size = max(len(perts) for perts in pert_sets.values())
+        padded_perts = torch.zeros(len(samples), max_set_size, dtype=torch.long)
+        mask = torch.zeros(len(samples), max_set_size, dtype=torch.bool)
+        for row, sample in enumerate(samples):
+            perts = pert_sets[sample]
+            padded_perts[row, :len(perts)] = torch.tensor(perts)
+            mask[row, :len(perts)] = True
+        padded_perts = padded_perts.to(pert_global_emb.device)
+        mask = mask.to(pert_global_emb.device)
+        pert_set_emb = self.set_attention(pert_global_emb[padded_perts], mask)
+        return samples, self.set_pooling(pert_set_emb, mask).squeeze(1)
+
     def forward(self, data):
         """
         Forward pass of the model
@@ -276,25 +304,7 @@ class GEARS_Model(torch.nn.Module):
             base_emb = base_emb.reshape(num_graphs, self.num_genes, -1)
 
             if pert_index.shape[0] != 0 and self.pert_agg == 'set_transformer':
-                ### group perturbed genes by sample, then pad to [num_perturbed_samples, max_set_size, hidden]
-                pert_sets = {}
-                for sample, pert in zip(pert_index[0].tolist(), pert_index[1].tolist()):
-                    pert_sets.setdefault(sample, []).append(pert)
-
-                samples = list(pert_sets.keys())
-                max_set_size = max(len(perts) for perts in pert_sets.values())
-                padded_perts = torch.zeros(len(samples), max_set_size, dtype=torch.long)
-                mask = torch.zeros(len(samples), max_set_size, dtype=torch.bool)
-                for row, sample in enumerate(samples):
-                    perts = pert_sets[sample]
-                    padded_perts[row, :len(perts)] = torch.tensor(perts)
-                    mask[row, :len(perts)] = True
-                padded_perts = padded_perts.to(self.args['device'])
-                mask = mask.to(self.args['device'])
-
-                pert_set_emb = pert_global_emb[padded_perts]
-                pert_set_emb = self.set_attention(pert_set_emb, mask)
-                emb_total = self.set_pooling(pert_set_emb, mask).squeeze(1)
+                samples, emb_total = self._aggregate_set(pert_global_emb, pert_index)
 
                 for row, sample in enumerate(samples):
                     base_emb[sample] = base_emb[sample] + emb_total[row]
@@ -317,6 +327,12 @@ class GEARS_Model(torch.nn.Module):
 
                     for idx, j in enumerate(pert_track.keys()):
                         base_emb[j] = base_emb[j] + emb_total[idx]
+
+                if self.pert_agg == 'residual_set_transformer':
+                    samples, pooled = self._aggregate_set(pert_global_emb, pert_index)
+                    corrections = self.set_residual_projection(pooled)
+                    for row, sample in enumerate(samples):
+                        base_emb[sample] = base_emb[sample] + corrections[row]
 
             base_emb = base_emb.reshape(num_graphs * self.num_genes, -1)
             base_emb = self.bn_pert_base(base_emb)
