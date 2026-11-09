@@ -4,7 +4,8 @@ Five fits and separate five-split validation/final-test evaluations are complete
 The [results](../results/norman/linear/README.md) contain all four metrics, per-pair
 scores, fitted models, predictions, training means, variance/SD, paired additive
 comparisons, and provenance. The linear pair adaptation is worse than additive in
-every split/metric. Matched trained neural comparisons remain pending.
+every split/metric. The [matched neural test workflow](norman-neural-test.md)
+compares published neural checkpoints against the same final-test panels.
 
 ## Model and evaluation contract
 

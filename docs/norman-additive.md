@@ -4,7 +4,8 @@ The additive baseline is fitted and evaluated on all five frozen Norman splits.
 Validation and final test are separate; see the [results](../results/norman/additive/README.md)
 for all four metrics, per-split scores, mean/sample variance/SD, and caveats.
 The [fitted linear pair adaptation](norman-linear.md) is now implemented and
-evaluated separately; matched trained GEARS/Set Transformer comparisons remain pending.
+evaluated separately. The [matched neural test workflow](norman-neural-test.md)
+reuses these exact targets and scorer for the published GEARS/Set Transformer checkpoints.
 
 ## Model and scoring contract
 
