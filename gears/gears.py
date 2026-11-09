@@ -118,7 +118,8 @@ class GEARS:
                 'uncertainty_reg': 'regularization term to balance uncertainty loss and prediction loss, default 1',
                 'direction_lambda': 'regularization term to balance direction loss and prediction loss, default 1',
                 'pert_agg': "perturbation set aggregation, 'sum' or 'set_transformer', default 'sum'",
-                'seed': 'seed for model initialization and training batch order, default None'
+                'seed': 'seed for model initialization and training batch order, default None',
+                'coexpression_batching': "'shared' for corrected batching or 'legacy' for historical checkpoints"
                }
     
     def model_initialize(self, hidden_size = 64,
@@ -138,6 +139,7 @@ class GEARS:
                          no_perturb = False,
                          pert_agg = 'sum',
                          seed = None,
+                         coexpression_batching = 'shared',
                          **kwargs
                         ):
         """
@@ -181,6 +183,9 @@ class GEARS:
         seed: int
             seed for model initialization and training batch order, default
             None (keep the global torch.manual_seed(0) set on import)
+        coexpression_batching: str
+            'shared' convolves one gene graph and repeats its embeddings across
+            cells. 'legacy' reproduces the historical first-cell-only edges.
 
         Returns
         -------
@@ -206,7 +211,8 @@ class GEARS:
                        'num_perts': self.num_perts,
                        'no_perturb': no_perturb,
                        'pert_agg': pert_agg,
-                       'seed': seed
+                       'seed': seed,
+                       'coexpression_batching': coexpression_batching
                       }
         
         if self.wandb:
@@ -268,9 +274,10 @@ class GEARS:
         with open(os.path.join(path, 'config.pkl'), 'rb') as f:
             config = pickle.load(f)
         
-        del config['device'], config['num_genes'], config['num_perts']
+        for key in ('device', 'num_genes', 'num_perts'):
+            config.pop(key, None)
+        config.setdefault('coexpression_batching', 'legacy')
         self.model_initialize(**config)
-        self.config = config
         
         state_dict = torch.load(os.path.join(path, 'model.pt'), map_location = torch.device('cpu'))
         if next(iter(state_dict))[:7] == 'module.':

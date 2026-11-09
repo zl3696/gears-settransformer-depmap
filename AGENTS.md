@@ -5,6 +5,9 @@
 - The Set Transformer aggregation is enabled with `pert_agg="set_transformer"`;
   the default `"sum"` path is retained. DepMap integration remains pending.
 - `splits/norman/` is the frozen shared condition-split protocol for all models.
+- New models use corrected shared coexpression batching. Historical checkpoints
+  without a batching setting load in legacy mode; never silently reinterpret them.
+- In the local course layout, also read the [workspace instructions](../../AGENTS.md).
 
 ## Development rules
 - Preserve existing model behavior unless a requested change requires otherwise.
@@ -18,6 +21,8 @@
   notebooks or assignment files without explicit authorization.
 
 ## Commands and documentation map
+- [Model variants](docs/model-variants.md): batching semantics, checkpoint
+  compatibility, experiment configuration and synthetic regression checks.
 - [Norman splits](docs/norman-splits.md): split rules, provenance, file map,
   GEARS integration limits, and portable verify/generate/test commands.
 - `scripts/norman_splits.py verify` audits hashes and reconstructs assignments.
@@ -28,7 +33,7 @@
 - `scripts/norman_train.py <run_id> --data-path ... --output-root ...` trains one
   planned run with the frozen controls, shared graphs and
   `configs/norman_training.json`; the test set is only scored with `--test`.
-- `python -m pytest tests/test_norman_protocol.py tests/test_set_transformer.py`
+- `python -m pytest tests/test_norman_protocol.py tests/test_set_transformer.py tests/test_coexpression_batching.py`
   runs the training-protocol and model checks on synthetic data.
 - [README](README.md): upstream GEARS installation and examples.
-- Final test scoring, the coexpression batching policy and DepMap variants remain TODO.
+- Final test scoring and DepMap variants remain TODO.

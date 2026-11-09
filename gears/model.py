@@ -142,6 +142,11 @@ class GEARS_Model(torch.nn.Module):
         self.num_layers_gene_pos = args['num_gene_gnn_layers']
         self.no_perturb = args['no_perturb']
         self.pert_emb_lambda = 0.2
+        # Missing fields identify historical configs/checkpoints. The public
+        # model_initialize API explicitly selects 'shared' for new models.
+        self.coexpression_batching = args.get('coexpression_batching', 'legacy')
+        if self.coexpression_batching not in ('shared', 'legacy'):
+            raise ValueError("coexpression_batching must be 'shared' or 'legacy'")
         
         # perturbation positional embedding added only to the perturbed genes
         self.pert_w = nn.Linear(1, hidden_size)
@@ -233,11 +238,19 @@ class GEARS_Model(torch.nn.Module):
             emb = self.bn_emb(emb)
             base_emb = self.emb_trans(emb)        
 
-            pos_emb = self.emb_pos(torch.LongTensor(list(range(self.num_genes))).repeat(num_graphs, ).to(self.args['device']))
+            gene_indices = torch.arange(self.num_genes, device=self.args['device'])
+            if self.coexpression_batching == 'legacy':
+                gene_indices = gene_indices.repeat(num_graphs)
+            pos_emb = self.emb_pos(gene_indices)
             for idx, layer in enumerate(self.layers_emb_pos):
                 pos_emb = layer(pos_emb, self.G_coexpress, self.G_coexpress_weight)
                 if idx < len(self.layers_emb_pos) - 1:
                     pos_emb = pos_emb.relu()
+            if self.coexpression_batching == 'shared':
+                # Edges index one gene graph. Convolve it once, then give every
+                # cell the same result; repeating before SGConv leaves later
+                # cells without the graph's inter-gene edges.
+                pos_emb = pos_emb.repeat(num_graphs, 1)
 
             base_emb = base_emb + 0.2 * pos_emb
             base_emb = self.emb_trans_v2(base_emb)

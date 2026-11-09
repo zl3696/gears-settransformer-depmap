@@ -106,7 +106,7 @@ cache is keyed by that file's digest, so a random-control `cell_graphs.pkl` is
 never reused. `prepare_split(split="custom", seed=N)` then reads
 `seed_N/gears_custom_split.pkl`.
 
-`scripts/norman_train.py <run_id>` runs one `planned_runs.csv` row (currently
+`scripts/norman_train.py <run_id>` runs one `configs/norman_runs.csv` row (currently
 `gears` and `gears_set_transformer`). It fits the coexpression graph on the
 training controls and singles, checks the fit population against
 `graph_metadata.json`, saves both graphs with tensor digests per split, and
@@ -119,8 +119,10 @@ python "$repo_dir/scripts/norman_train.py" gears_split1_train101 \
     --data-path "$runtime_dir/data" --output-root "$runtime_dir"
 ```
 
-TODO: settle the coexpression batching policy and the final test scoring
-definitions, and add the DepMap variants.
+Corrected runs use shared coexpression propagation and separate output paths;
+see [model variants](model-variants.md) for checkpoint compatibility and tests.
+The frozen historical run plan is not modified. TODO: settle final test scoring
+definitions and add the DepMap variants.
 
 Fit any new preprocessing/graphs/loss masks on permitted training observations.
 Keep held-out outcomes and their rankings out of model inputs and tuning. The

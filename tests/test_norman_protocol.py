@@ -10,6 +10,7 @@ import gzip
 import hashlib
 import json
 import os
+import pickle
 import tempfile
 
 import anndata
@@ -17,6 +18,7 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 import torch
+import pytest
 from torch_geometric.data import Data, DataLoader
 
 from gears import GEARS, PertData
@@ -152,7 +154,7 @@ class FailingLoader:
         raise AssertionError('test loader must not be used during training')
 
 
-def make_gears():
+def make_gears(pert_agg='sum', **model_options):
     torch.manual_seed(0)
     conditions = ['ctrl', 'A+ctrl', 'B+ctrl', 'A+B']
     X = np.random.RandomState(0).rand(len(conditions) * 4, len(GENES)).astype(np.float32)
@@ -182,7 +184,7 @@ def make_gears():
     pert_data.default_pert_graph = True
 
     model = GEARS(pert_data, device='cpu')
-    model.model_initialize(hidden_size=8, seed=101,
+    model.model_initialize(hidden_size=8, seed=101, pert_agg=pert_agg, **model_options,
                            G_coexpress=torch.tensor([[0, 1, 2], [1, 2, 3]]),
                            G_coexpress_weight=torch.rand(3),
                            G_go=torch.tensor([[0, 1], [1, 2]]),
@@ -202,3 +204,39 @@ def test_train_selects_on_normalized_mse_without_test():
 def test_unknown_selection_metric_is_rejected():
     model = make_gears()
     expect_value_error(lambda: model.train(epochs=1, selection_metric='pearson'))
+
+
+@pytest.mark.parametrize('aggregation', ['sum', 'set_transformer'])
+@pytest.mark.parametrize('policy', ['shared', 'legacy', 'missing'])
+def test_checkpoint_preserves_batching_policy(tmp_path, aggregation, policy):
+    chosen = 'legacy' if policy == 'missing' else policy
+    original = make_gears(aggregation, coexpression_batching=chosen)
+    batch = next(iter(original.dataloader['val_loader']))
+    # save_model saves best_model, as it does after training.
+    original.best_model.eval()
+    with torch.no_grad():
+        expected = original.best_model(batch)
+    checkpoint = tmp_path / 'checkpoint'
+    original.save_model(str(checkpoint))
+    if policy == 'missing':
+        with (checkpoint / 'config.pkl').open('rb') as stream:
+            config = pickle.load(stream)
+        del config['coexpression_batching']
+        with (checkpoint / 'config.pkl').open('wb') as stream:
+            pickle.dump(config, stream)
+    restored = make_gears()
+    restored.load_pretrained(str(checkpoint))
+    assert restored.config['coexpression_batching'] == chosen
+    restored.best_model.eval()
+    with torch.no_grad():
+        torch.testing.assert_close(restored.best_model(batch), expected)
+    # Loading and re-saving must retain complete, loadable configuration.
+    restored.save_model(str(tmp_path / 'resaved'))
+    restored.load_pretrained(str(tmp_path / 'resaved'))
+    assert restored.config['coexpression_batching'] == chosen
+    assert restored.config['num_genes'] == len(GENES)
+
+
+def test_new_models_default_to_corrected_batching():
+    model = make_gears()
+    assert model.config['coexpression_batching'] == 'shared'

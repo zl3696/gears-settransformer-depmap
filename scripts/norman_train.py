@@ -1,6 +1,6 @@
 """Train one planned Norman run on the frozen condition splits.
 
-Reads the run from splits/norman/planned_runs.csv and the training protocol from
+Reads the run from configs/norman_runs.csv and the training protocol from
 configs/norman_training.json. Cells use the saved control assignments, graphs
 are fitted once per split and shared by all models, and the checkpoint is
 selected on validation normalized MSE. The test set is only evaluated with
@@ -37,8 +37,8 @@ def tensor_sha256(*tensors):
     return result.hexdigest()
 
 
-def planned_run(split_dir, run_id):
-    with (split_dir / "planned_runs.csv").open(newline="") as stream:
+def planned_run(run_plan, run_id):
+    with run_plan.open(newline="") as stream:
         runs = {row["run_id"]: row for row in csv.DictReader(stream)}
     require(run_id in runs, f"Unknown run_id: {run_id}")
     return runs[run_id]
@@ -96,7 +96,7 @@ def git_commit():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("run_id", help="run_id from splits/norman/planned_runs.csv")
+    parser.add_argument("run_id", help="run_id from configs/norman_runs.csv")
     parser.add_argument("--data-path", type=Path, required=True, help="GEARS data directory (downloads and caches)")
     parser.add_argument("--output-root", type=Path, required=True, help="Directory that planned output paths are relative to")
     parser.add_argument("--device", default="cuda")
@@ -105,9 +105,11 @@ def main():
 
     output_root = args.output_root.resolve()
     require(not output_root.is_relative_to(REPOSITORY), "Outputs must be outside the source checkout")
+    require(not args.data_path.resolve().is_relative_to(REPOSITORY), "Data must be outside the source checkout")
     protocol = json.loads(PROTOCOL.read_text())
     split_dir = REPOSITORY / protocol["split_dir"]
-    run = planned_run(split_dir, args.run_id)
+    run_plan = REPOSITORY / protocol["run_plan"]
+    run = planned_run(run_plan, args.run_id)
     check_protocol(protocol, split_dir, run)
     split_seed = int(run["split_seed"])
     run_dir = (output_root / run["result_path"]).parent
@@ -140,6 +142,9 @@ def main():
     selected = model.val_history[model.best_epoch - 1]
     results = {"run_id": args.run_id, "model": run["model"], "split_seed": split_seed,
                "training_seed": protocol["training_seed"], "git_commit": git_commit(),
+               "pert_agg": model.config["pert_agg"],
+               "coexpression_batching": model.config["coexpression_batching"],
+               "run_plan_sha256": file_sha256(run_plan),
                "protocol_sha256": file_sha256(PROTOCOL), "split_bundle_sha256": protocol["split_bundle_sha256"],
                "graph_sha256": {name: graphs[name]["sha256"] for name in ("coexpress", "go")},
                "coexpression_fit_cells": graphs["fit_cells"],
