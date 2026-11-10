@@ -3,7 +3,7 @@
 Reads the run from configs/norman_runs.csv and the training protocol from
 configs/norman_training.json. Cells use the saved control assignments, graphs
 are fitted once per split and shared by all models, and the checkpoint is
-selected on validation normalized MSE. The test set is only evaluated with
+selected on validation top-20 DE MSE. The test set is only evaluated with
 --test. Outputs must be written outside the source checkout.
 """
 

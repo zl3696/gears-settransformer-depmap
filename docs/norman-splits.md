@@ -94,9 +94,12 @@ snapshot. It pins the snapshot by bundle and `config.json` digests and freezes:
   batch size 32;
 - GEARS default graphs: coexpression k=20 and threshold 0.4, default GO graph
   with k=20;
-- checkpoint selection on validation normalized MSE: for each validation pair,
-  MSE(predicted mean, true mean) / MSE(control mean, true mean) over its top 20
-  DE genes, averaged over pairs. Values below 1 beat predicting no change.
+- checkpoint selection on validation top-20 DE MSE (`mse_de`), the original
+  GEARS rule: the mean over validation pairs of MSE(predicted mean, true mean)
+  on each pair's top 20 DE genes. Normalized MSE (that MSE divided by
+  MSE(control mean, true mean), averaged over pairs) is still recorded per
+  epoch, but a per-pair ratio is unstable when a pair barely differs from
+  control, so it is not used for selection.
 
 `PertData.load(data_name="norman", frozen_split_dir=...)` checks the
 expression-gene, perturbation-node and retained-cell order and the file hashes
@@ -110,7 +113,7 @@ never reused. `prepare_split(split="custom", seed=N)` then reads
 `gears` and `gears_set_transformer`). It fits the coexpression graph on the
 training controls and singles, checks the fit population against
 `graph_metadata.json`, saves both graphs with tensor digests per split, and
-reuses them for every model. `GEARS.train(selection_metric="normalized_mse_de",
+reuses them for every model. `GEARS.train(selection_metric="mse_de",
 run_test=False)` keeps the test loader out of training; `--test` (or
 `GEARS.test()`) evaluates the selected checkpoint afterwards.
 
