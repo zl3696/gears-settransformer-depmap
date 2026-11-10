@@ -34,8 +34,8 @@
     "test_batch_size": 128
   },
   "checkpoint_selection": {
-    "metric": "normalized_mse_de",
-    "definition": "For each validation pair, MSE(predicted mean, true mean) / MSE(control mean, true mean) over that pair's top 20 DE genes, averaged over pairs; the epoch with the lowest value is kept"
+    "metric": "mse_de",
+    "definition": "Original GEARS rule: mean over validation pairs of MSE(predicted mean, true mean) on each pair's top 20 DE genes; the epoch with the lowest value is kept. normalized_mse_de is still recorded per epoch but not used for selection"
   },
   "pending": [
     "Final test scoring definitions",
