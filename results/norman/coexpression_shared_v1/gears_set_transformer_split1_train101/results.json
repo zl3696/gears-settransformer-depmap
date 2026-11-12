@@ -1,0 +1,131 @@
+{
+  "run_id": "gears_set_transformer_split1_train101",
+  "model": "gears_set_transformer",
+  "split_seed": 1,
+  "training_seed": 101,
+  "git_commit": "4f865d53ae7ad92474586e536d55d8d964bc1d21",
+  "pert_agg": "set_transformer",
+  "coexpression_batching": "shared",
+  "run_plan_sha256": "fb547a46bb7a6f6b8051bfbb40d4acd8b0b36d1373828da82ac4164dd1d08ef1",
+  "protocol_sha256": "2fdd3fc0be22120e2f84ab852b742851b870a1eb8daef05c0e19bf1690ecf811",
+  "split_bundle_sha256": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34",
+  "graph_sha256": {
+    "coexpress": "642119c25dca12764617814683ad3f47ba5911cea49da2127f42f467c9a11833",
+    "go": "fa75e956e4fd9284c5ce08e87712126a75685e186bdbec398ada77296cffbfb4"
+  },
+  "coexpression_fit_cells": 54931,
+  "selection_metric": "mse_de",
+  "best_epoch": 2,
+  "selected_validation": {
+    "mse": 0.005301435943692923,
+    "mse_de": 0.21083079278469086,
+    "normalized_mse_de": 2.38572096824646
+  },
+  "validation_history": [
+    {
+      "mse": 0.00701693631708622,
+      "mse_de": 0.3363996148109436,
+      "normalized_mse_de": 1.4878648519515991
+    },
+    {
+      "mse": 0.005301435943692923,
+      "mse_de": 0.21083079278469086,
+      "normalized_mse_de": 2.38572096824646
+    },
+    {
+      "mse": 0.006542745046317577,
+      "mse_de": 0.3640630841255188,
+      "normalized_mse_de": 1.9720999002456665
+    },
+    {
+      "mse": 0.0072887735441327095,
+      "mse_de": 0.4190558195114136,
+      "normalized_mse_de": 3.068197727203369
+    },
+    {
+      "mse": 0.006054885219782591,
+      "mse_de": 0.3393952250480652,
+      "normalized_mse_de": 2.4007375240325928
+    },
+    {
+      "mse": 0.005104317795485258,
+      "mse_de": 0.2616775333881378,
+      "normalized_mse_de": 1.9537078142166138
+    },
+    {
+      "mse": 0.0052449461072683334,
+      "mse_de": 0.27986961603164673,
+      "normalized_mse_de": 2.282989978790283
+    },
+    {
+      "mse": 0.006134058814495802,
+      "mse_de": 0.34129858016967773,
+      "normalized_mse_de": 2.2761948108673096
+    },
+    {
+      "mse": 0.005288821179419756,
+      "mse_de": 0.2814861536026001,
+      "normalized_mse_de": 2.1435697078704834
+    },
+    {
+      "mse": 0.0056898584589362144,
+      "mse_de": 0.31230831146240234,
+      "normalized_mse_de": 2.2885005474090576
+    },
+    {
+      "mse": 0.0057108900509774685,
+      "mse_de": 0.30715101957321167,
+      "normalized_mse_de": 2.5115208625793457
+    },
+    {
+      "mse": 0.005547203589230776,
+      "mse_de": 0.29495924711227417,
+      "normalized_mse_de": 2.390305995941162
+    },
+    {
+      "mse": 0.005353712011128664,
+      "mse_de": 0.28739845752716064,
+      "normalized_mse_de": 2.2769761085510254
+    },
+    {
+      "mse": 0.005582112353295088,
+      "mse_de": 0.29869818687438965,
+      "normalized_mse_de": 2.4503796100616455
+    },
+    {
+      "mse": 0.005284247454255819,
+      "mse_de": 0.28177085518836975,
+      "normalized_mse_de": 2.088505268096924
+    },
+    {
+      "mse": 0.0056421756744384766,
+      "mse_de": 0.29985111951828003,
+      "normalized_mse_de": 2.5680418014526367
+    },
+    {
+      "mse": 0.0056238495744764805,
+      "mse_de": 0.29700586199760437,
+      "normalized_mse_de": 2.3027830123901367
+    },
+    {
+      "mse": 0.005290003959089518,
+      "mse_de": 0.27614670991897583,
+      "normalized_mse_de": 1.9469488859176636
+    },
+    {
+      "mse": 0.005430284421890974,
+      "mse_de": 0.28961676359176636,
+      "normalized_mse_de": 2.3460121154785156
+    },
+    {
+      "mse": 0.005287796258926392,
+      "mse_de": 0.2756289839744568,
+      "normalized_mse_de": 2.3358590602874756
+    }
+  ],
+  "test_evaluated": false,
+  "checkpoint_files": [
+    "config.pkl",
+    "model.pt"
+  ]
+}
