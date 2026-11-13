@@ -1,0 +1,50 @@
+{
+  "artifact_sha256": {
+    "evaluation_cells.csv.gz": "69b120dd6a566b5d1845e291e014b01e6ab4e31a03448f1a38b8463d6a17348d",
+    "evaluation_config.json": "65a33c51a60b6fc35057c333a9eda117523fe17ae0147d90a8e091705dc42ebc",
+    "first_batch_predictions.npz": "c7b1c5ad79ee7c080a8da3a83bc83481cd1cc91552b3acbeffd7bb24ac2a0d6f",
+    "independent_metrics_check.json": "1be4da927699a80f49099e7119afa84fb86cd181bf34330134d215b7d910858c",
+    "per_condition_metrics.csv": "93c20fd6f0902e97da2cdb23c767928a8be31e03b9d819329cb5e23293bbb0d3",
+    "prediction_schedule.csv": "a53e9258478a480167d007dd366296891d77545d639cd53691028318d22ceff3",
+    "scoring_genes.csv": "ba113cb97309f9c8d20fcf3ec72575c135534cb0a80302fb948b24eef68848d1",
+    "scoring_inputs.npz": "1d791ecdb7feaaea2f8eced055a27969847b85ef89cc9dd3748fd055bb607f29"
+  },
+  "configuration_sha256": "65a33c51a60b6fc35057c333a9eda117523fe17ae0147d90a8e091705dc42ebc",
+  "control_rows_read": 4588,
+  "control_sparse_entries_read": 1925892,
+  "counts_layer_read": false,
+  "created_at": "2026-11-12T17:13:29.611120-05:00",
+  "de_genes_per_pair": 20,
+  "evaluated_cells": 7214,
+  "evaluated_pairs": 26,
+  "expression_genes": 5045,
+  "inference_seconds": 34.48502020793967,
+  "metrics": {
+    "mse": 0.0048201246525374315,
+    "mse_de": 0.11417796373160413,
+    "pearson": 0.987846166045865,
+    "pearson_de": 0.9540691363077868
+  },
+  "model": "gears_residual_set_transformer",
+  "partition": "test",
+  "peak_process_rss_gib": 0.985626220703125,
+  "prior_exposure": "Existing baseline tests, overlapping validation panels, and descriptive PCA",
+  "run_id": "gears_residual_set_transformer_split1_train101",
+  "scorer_warning_counts": {},
+  "split_seed": 1,
+  "status": "final_test_evaluated",
+  "test_expression_rows_read_from_h5ad": 0,
+  "truth_and_de_indices": "Exact existing verified additive final-test scoring arrays",
+  "undefined_to_zero_counts": {
+    "pearson_de_undefined_to_zero": 0,
+    "pearson_undefined_to_zero": 0
+  },
+  "versions": {
+    "h5py": "3.12.1",
+    "numpy": "1.26.4",
+    "scikit-learn": "1.5.1",
+    "scipy": "1.14.1",
+    "torch": "2.2.2",
+    "torch-geometric": "2.5.3"
+  }
+}

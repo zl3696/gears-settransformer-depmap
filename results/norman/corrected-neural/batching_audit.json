@@ -1,0 +1,28 @@
+{
+  "atol": 1e-05,
+  "checks": [
+    {
+      "batch_size_7_max_absolute_difference": 1.430511474609375e-06,
+      "model": "gears",
+      "reversed_batch_max_absolute_difference": 0.0,
+      "source_commit": "858a96bb1fa92ffaf4bd35d4944d61b9a6960ed9"
+    },
+    {
+      "batch_size_7_max_absolute_difference": 2.384185791015625e-07,
+      "model": "gears_set_transformer",
+      "reversed_batch_max_absolute_difference": 0.0,
+      "source_commit": "858a96bb1fa92ffaf4bd35d4944d61b9a6960ed9"
+    },
+    {
+      "batch_size_7_max_absolute_difference": 4.76837158203125e-07,
+      "model": "gears_residual_set_transformer",
+      "reversed_batch_max_absolute_difference": 0.0,
+      "source_commit": "b112de0833294b4ae0048549fe3d1903a974323b"
+    }
+  ],
+  "protocol_sha256": "c6ae542bc7d792949641dfed4e5e994008af927589cac4dc621ffeef870bbfc2",
+  "rtol": 1e-05,
+  "split_seed": 1,
+  "status": "passed",
+  "test_cells_used": 32
+}

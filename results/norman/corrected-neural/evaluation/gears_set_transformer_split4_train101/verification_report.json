@@ -1,0 +1,8 @@
+{
+  "baseline_metrics_reproduced": true,
+  "exact_baseline_targets_cells_genes": true,
+  "frozen_control_and_batch_schedule": true,
+  "independent_numpy_metrics": true,
+  "saved_neural_scores_reproduced": true,
+  "status": "passed"
+}

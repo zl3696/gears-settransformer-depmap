@@ -1,0 +1,187 @@
+{
+  "artifact_sha256": {
+    "metric_summary.csv": "eb087c04143d74ca10dc83a97e612d3eccc60d49f94d0b124a8b3f07841cfea8",
+    "paired_difference_summary.csv": "c81f8a3820446ba38622aa1c9b74212431c259f32886d76935cac8438cdb99dd",
+    "report.md": "f9c99ef05d58e8e8b327db4a19711fc62b60837501aad580e41d56cf54e8b657",
+    "split_metrics.csv": "50357dc6566564cddcba82feb8127187a988b21116f65af24815ff5e756aa851"
+  },
+  "matched_baseline_contract": true,
+  "metrics": [
+    {
+      "mean": 0.0018897754413737821,
+      "metric": "mse",
+      "model": "additive",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0004652121214759536,
+      "sample_variance": 2.164223179681574e-07
+    },
+    {
+      "mean": 0.058602025507171654,
+      "metric": "mse_de",
+      "model": "additive",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.011873498968351654,
+      "sample_variance": 0.0001409799777514478
+    },
+    {
+      "mean": 0.9946005965255516,
+      "metric": "pearson",
+      "model": "additive",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0011693810411895818,
+      "sample_variance": 1.3674520194936306e-06
+    },
+    {
+      "mean": 0.9407558266334355,
+      "metric": "pearson_de",
+      "model": "additive",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.05002198737854196,
+      "sample_variance": 0.002502199221299011
+    },
+    {
+      "mean": 0.004809577735188368,
+      "metric": "mse",
+      "model": "linear",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0009262958312379145,
+      "sample_variance": 8.580239669687389e-07
+    },
+    {
+      "mean": 0.2682203488869542,
+      "metric": "mse_de",
+      "model": "linear",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0274409694674282,
+      "sample_variance": 0.0007530068053123267
+    },
+    {
+      "mean": 0.9856286605927169,
+      "metric": "pearson",
+      "model": "linear",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0026659246078402873,
+      "sample_variance": 7.1071540146883885e-06
+    },
+    {
+      "mean": 0.8603614574506965,
+      "metric": "pearson_de",
+      "model": "linear",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0494944767122901,
+      "sample_variance": 0.0024497032250234267
+    },
+    {
+      "mean": 0.005108914115733249,
+      "metric": "mse",
+      "model": "gears",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.001178326804795069,
+      "sample_variance": 1.3884540588985568e-06
+    },
+    {
+      "mean": 0.11454995391154812,
+      "metric": "mse_de",
+      "model": "gears",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.00464861138874569,
+      "sample_variance": 2.160958784357613e-05
+    },
+    {
+      "mean": 0.987246701758893,
+      "metric": "pearson",
+      "model": "gears",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0025345529127172445,
+      "sample_variance": 6.423958467363468e-06
+    },
+    {
+      "mean": 0.9139890718749264,
+      "metric": "pearson_de",
+      "model": "gears",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.04421269393124484,
+      "sample_variance": 0.001954762304657935
+    },
+    {
+      "mean": 0.004760195068397177,
+      "metric": "mse",
+      "model": "gears_set_transformer",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0008058620692075556,
+      "sample_variance": 6.494136745874831e-07
+    },
+    {
+      "mean": 0.17336529903517525,
+      "metric": "mse_de",
+      "model": "gears_set_transformer",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.021805972959953596,
+      "sample_variance": 0.0004755004567302273
+    },
+    {
+      "mean": 0.9868922310556135,
+      "metric": "pearson",
+      "model": "gears_set_transformer",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0020038026417675894,
+      "sample_variance": 4.01522502715477e-06
+    },
+    {
+      "mean": 0.8938309997189833,
+      "metric": "pearson_de",
+      "model": "gears_set_transformer",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.04852314725595192,
+      "sample_variance": 0.0023544958196227944
+    },
+    {
+      "mean": 0.004963333353092727,
+      "metric": "mse",
+      "model": "gears_residual_set_transformer",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0011165392498381137,
+      "sample_variance": 1.2466598964290578e-06
+    },
+    {
+      "mean": 0.11946737360991633,
+      "metric": "mse_de",
+      "model": "gears_residual_set_transformer",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.01135876908801165,
+      "sample_variance": 0.000129021635194769
+    },
+    {
+      "mean": 0.987458162395473,
+      "metric": "pearson",
+      "model": "gears_residual_set_transformer",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.0024682490489297,
+      "sample_variance": 6.0922533675423705e-06
+    },
+    {
+      "mean": 0.9118243508259974,
+      "metric": "pearson_de",
+      "model": "gears_residual_set_transformer",
+      "n_splits": 5,
+      "sample_standard_deviation": 0.043232846736429104,
+      "sample_variance": 0.0018690790369355688
+    }
+  ],
+  "models": [
+    "additive",
+    "linear",
+    "gears",
+    "gears_set_transformer",
+    "gears_residual_set_transformer"
+  ],
+  "protocol_sha256": "c6ae542bc7d792949641dfed4e5e994008af927589cac4dc621ffeef870bbfc2",
+  "split_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "status": "all_fifteen_corrected_neural_test_runs_verified"
+}
