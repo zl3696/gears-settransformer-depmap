@@ -6,8 +6,8 @@
   the default `"sum"` path is retained. DepMap integration remains pending.
 - `splits/norman/` is the frozen shared condition-split protocol for all models.
 - Additive and fitted linear baselines have five validation/test panels. Published
-  GEARS/Set Transformer checkpoints now have matched five-split final-test results;
-  DepMap and broader interaction analyses remain pending.
+  historical and new corrected-batching GEARS/replacement/residual Set Transformer
+  checkpoints have matched five-split final-test results. DepMap remains pending.
 
 ## Development rules
 - Preserve existing model behavior unless a requested change requires otherwise.
@@ -53,3 +53,10 @@
   stay external; preserve the documented batch-dependent coexpression behavior.
 - `scripts/norman_neural_test.py {download,run,verify,regenerate,summary}` takes an
   explicit external `--runtime-root`; no training or checkpoint reselection occurs.
+- [Corrected neural final tests](docs/norman-corrected-neural-test.md): separate
+  inference-only testing of the 15 new shared-batching GEARS, replacement and
+  residual Set Transformer checkpoints. `scripts/norman_corrected_neural_test.py`
+  uses the unchanged baseline contract and preserves the historical runner.
+- [Corrected neural result export](results/norman/corrected-neural/README.md):
+  compact per-pair metrics, configurations, five-model statistics, provenance
+  and verification records; full inference arrays and checkpoints stay external.

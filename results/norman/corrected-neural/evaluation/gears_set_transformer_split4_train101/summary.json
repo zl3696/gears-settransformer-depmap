@@ -1,0 +1,52 @@
+{
+  "artifact_sha256": {
+    "evaluation_cells.csv.gz": "b8366f9e9b34e537bd72014c4970c69affecdcecd2301a399b22e242ed45e407",
+    "evaluation_config.json": "9191acb120e83eecaedb72359d0a346e261fff8ac97eb6890a80d15b515b8675",
+    "first_batch_predictions.npz": "e3ae8a3bab60da5bb526ba0c825a7a001b57cdb99fca8e5126d6f01792daca95",
+    "independent_metrics_check.json": "53d49005c5a7ff5409811b922c7d4ad99a75d46624594f866665b94911349319",
+    "per_condition_metrics.csv": "41ea1343a21de112afba4cdbad60f2584f384832edff593068f7f8a74bc3c24d",
+    "prediction_schedule.csv": "df96cb6d3093388c7f2573d127b385d041f9ce2498ec3378068dcfeb6448f441",
+    "scoring_genes.csv": "8e162388fa9ede73a15a4a1ebca8b741fc8676ea30942fe5dbd953397bcbbf1b",
+    "scoring_inputs.npz": "de86a5baec2253549dd0ad8c5f4da4a42c757ae58e605b4a6af39093435dba55"
+  },
+  "configuration_sha256": "9191acb120e83eecaedb72359d0a346e261fff8ac97eb6890a80d15b515b8675",
+  "control_rows_read": 4886,
+  "control_sparse_entries_read": 2054538,
+  "counts_layer_read": false,
+  "created_at": "2026-11-12T17:09:46.146711-05:00",
+  "de_genes_per_pair": 20,
+  "evaluated_cells": 8036,
+  "evaluated_pairs": 26,
+  "expression_genes": 5045,
+  "inference_seconds": 75.36439333297312,
+  "metrics": {
+    "mse": 0.005651900280462143,
+    "mse_de": 0.19231862934554003,
+    "pearson": 0.9848185182958086,
+    "pearson_de": 0.9014753489396592
+  },
+  "model": "gears_set_transformer",
+  "partition": "test",
+  "peak_process_rss_gib": 0.985626220703125,
+  "prior_exposure": "Existing baseline tests, overlapping validation panels, and descriptive PCA",
+  "run_id": "gears_set_transformer_split4_train101",
+  "scorer_warning_counts": {
+    "ConstantInputWarning": 1
+  },
+  "split_seed": 4,
+  "status": "final_test_evaluated",
+  "test_expression_rows_read_from_h5ad": 0,
+  "truth_and_de_indices": "Exact existing verified additive final-test scoring arrays",
+  "undefined_to_zero_counts": {
+    "pearson_de_undefined_to_zero": 1,
+    "pearson_undefined_to_zero": 0
+  },
+  "versions": {
+    "h5py": "3.12.1",
+    "numpy": "1.26.4",
+    "scikit-learn": "1.5.1",
+    "scipy": "1.14.1",
+    "torch": "2.2.2",
+    "torch-geometric": "2.5.3"
+  }
+}

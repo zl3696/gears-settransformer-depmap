@@ -1,5 +1,9 @@
 # Norman neural final tests matched to the baselines
 
+This document covers the historical `b2390d26` checkpoints. The newer corrected
+batching and residual checkpoints use the separate
+[corrected neural workflow](norman-corrected-neural-test.md).
+
 ## Evaluation contract
 
 The user authorized local final testing of all ten published GEARS and Set

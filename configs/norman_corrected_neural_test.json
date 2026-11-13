@@ -1,0 +1,346 @@
+{
+  "schema_version": 1,
+  "repository": "zl3696/gears-settransformer-depmap",
+  "source_h5ad_sha256": "23ffb0fac6a847ff927cf7509d80d85052bfefbfb97610786a2dafaaefa0b6a0",
+  "split_bundle_sha256": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34",
+  "scorer_sha256": "744668b54fa05c0493baefad3da6fdccfa658426db5d0519b27a2d3f4f036dd7",
+  "metrics": [
+    "mse",
+    "mse_de",
+    "pearson",
+    "pearson_de"
+  ],
+  "split_seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "output_directory": "outputs/norman-corrected-neural-test",
+  "selection_metric": "mse_de",
+  "coexpression_batching": "shared",
+  "models": [
+    "gears",
+    "gears_set_transformer",
+    "gears_residual_set_transformer"
+  ],
+  "sources": [
+    {
+      "source_commit": "858a96bb1fa92ffaf4bd35d4944d61b9a6960ed9",
+      "result_namespace": "coexpression_shared_v1",
+      "models": [
+        "gears",
+        "gears_set_transformer"
+      ],
+      "artifacts": [
+        {
+          "path": "configs/norman_runs.csv",
+          "git_blob_sha1": "7334530df51ce5606d124677610877d43f769cea",
+          "size": 3685
+        },
+        {
+          "path": "configs/norman_training.json",
+          "git_blob_sha1": "5b8f51a53443cccdbf856ff33ce285079243a330",
+          "size": 1416
+        },
+        {
+          "path": "docs/model-variants.md",
+          "git_blob_sha1": "a55aa8ec1215148cf188d5f3d30cdd2f72c7b900",
+          "size": 3363
+        },
+        {
+          "path": "gears/inference.py",
+          "git_blob_sha1": "69e7be50f6b89f94d67c3de1d5f0e7de301b3ba2",
+          "size": 34567
+        },
+        {
+          "path": "gears/model.py",
+          "git_blob_sha1": "0d38dbbc6b90f67cf7a867e0ba62ef55765a13c2",
+          "size": 15933
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split1_train101/config.pkl",
+          "git_blob_sha1": "90a9c79202fcb2115a1cbe223e3d1fe6c2487dbf",
+          "size": 4170517
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split1_train101/model.pt",
+          "git_blob_sha1": "990cccf0e76ff37397e401628409b51d3c05c8d6",
+          "size": 9364348
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split1_train101/results.json",
+          "git_blob_sha1": "e6ac3cea1d3109a6e10387c3ba2a1af86add64df",
+          "size": 3813
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split2_train101/config.pkl",
+          "git_blob_sha1": "11631250570ff059e9515966f46f384fd2a885de",
+          "size": 4170517
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split2_train101/model.pt",
+          "git_blob_sha1": "75d0f1e3ddef9665bb6d6563522da7e9ad35e60c",
+          "size": 9364348
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split2_train101/results.json",
+          "git_blob_sha1": "894736bad41ff2ece5a0ddd7ce568ade3958fb0f",
+          "size": 3817
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split3_train101/config.pkl",
+          "git_blob_sha1": "06e03f0783ca0c6444fd9fcff8563a83ad27ab64",
+          "size": 4170517
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split3_train101/model.pt",
+          "git_blob_sha1": "dad58b05b2b2e4f13cecd22b64d5364f9f98753e",
+          "size": 9364348
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split3_train101/results.json",
+          "git_blob_sha1": "b1e1cb92e766dc9d8f5cfebc6567c60e5aeab48c",
+          "size": 3802
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split4_train101/config.pkl",
+          "git_blob_sha1": "74587cbaafa588ad5a75c7b0f1c6646c1240f606",
+          "size": 4170517
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split4_train101/model.pt",
+          "git_blob_sha1": "f31820f3b965a007eb8464b08ab6d115b698a29f",
+          "size": 9364348
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split4_train101/results.json",
+          "git_blob_sha1": "bf79919d8807068a1805fd0ca1f9989c58351a82",
+          "size": 3824
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split5_train101/config.pkl",
+          "git_blob_sha1": "ba509765a30f728626685e0f7c99f3495aadb98a",
+          "size": 4170517
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split5_train101/model.pt",
+          "git_blob_sha1": "48949c4b7b06b9f5fceb07744d99ac2105e5d598",
+          "size": 9364348
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_set_transformer_split5_train101/results.json",
+          "git_blob_sha1": "10e01e38fae16696dcf62f9725cd06d7d007aaab",
+          "size": 3807
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split1_train101/config.pkl",
+          "git_blob_sha1": "3ed6082dcb05a9fd38b7ee71e210a22453edf39e",
+          "size": 4170505
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split1_train101/model.pt",
+          "git_blob_sha1": "3196998ce83fc38efb18328c515b97de2cb682f9",
+          "size": 9260531
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split1_train101/results.json",
+          "git_blob_sha1": "d5bf36ad29098a7c94d401c56493dc96994df6ee",
+          "size": 3767
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split2_train101/config.pkl",
+          "git_blob_sha1": "e5d415ff992a3f247c65ce1a9f47db52aaf9fa4d",
+          "size": 4170505
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split2_train101/model.pt",
+          "git_blob_sha1": "f565137ac5442af9987790d592b72dc8f727c048",
+          "size": 9260531
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split2_train101/results.json",
+          "git_blob_sha1": "7f4336ff0c46964498591cc658d2762e461bd36c",
+          "size": 3779
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split3_train101/config.pkl",
+          "git_blob_sha1": "82d3bc3a8323e7bb760a29845a412844cd2eb579",
+          "size": 4170505
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split3_train101/model.pt",
+          "git_blob_sha1": "6d81d7542de9c8a5d9af345556adc3aa1b333107",
+          "size": 9260531
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split3_train101/results.json",
+          "git_blob_sha1": "5b94c99d5e6424e2d1a7e51812bff95b96e54f38",
+          "size": 3764
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split4_train101/config.pkl",
+          "git_blob_sha1": "cf0583911ae07b2cb23bf4640210264e66750df1",
+          "size": 4170505
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split4_train101/model.pt",
+          "git_blob_sha1": "12b529c002cf4d6d626ea3dd9fe09b9c2c406246",
+          "size": 9260531
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split4_train101/results.json",
+          "git_blob_sha1": "5af3b9a1c4105832f6e097dc399102b458f84402",
+          "size": 3780
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split5_train101/config.pkl",
+          "git_blob_sha1": "7b62e38ee647dd2012c0556dfc558b255b28376d",
+          "size": 4170505
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split5_train101/model.pt",
+          "git_blob_sha1": "6fc965d192fd6ea8da8b652997cb6533195f0e7b",
+          "size": 9260531
+        },
+        {
+          "path": "results/norman/coexpression_shared_v1/gears_split5_train101/results.json",
+          "git_blob_sha1": "9c3fd8ce8296304cbe06b3993b28a7818e92e911",
+          "size": 3771
+        },
+        {
+          "path": "scripts/norman_train.py",
+          "git_blob_sha1": "b098b5595bf445cdab0b20cace56f0af4920ffca",
+          "size": 8509
+        }
+      ]
+    },
+    {
+      "source_commit": "b112de0833294b4ae0048549fe3d1903a974323b",
+      "result_namespace": "residual_comparison_v1",
+      "models": [
+        "gears_residual_set_transformer"
+      ],
+      "artifacts": [
+        {
+          "path": "configs/norman_runs.csv",
+          "git_blob_sha1": "d412b63c8475e9bf23e1b89f9069be9ee5a55f73",
+          "size": 5800
+        },
+        {
+          "path": "configs/norman_training.json",
+          "git_blob_sha1": "dd28475f72a2d1e785495c35564f7451fe29172e",
+          "size": 1496
+        },
+        {
+          "path": "docs/model-variants.md",
+          "git_blob_sha1": "e6c2be519c9283cf7c80bc40942713390ac1571c",
+          "size": 5522
+        },
+        {
+          "path": "gears/inference.py",
+          "git_blob_sha1": "69e7be50f6b89f94d67c3de1d5f0e7de301b3ba2",
+          "size": 34567
+        },
+        {
+          "path": "gears/model.py",
+          "git_blob_sha1": "5d0dc8dbf323eba9a10b6357147d5b2d33e70b6a",
+          "size": 17035
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split1_train101/config.pkl",
+          "git_blob_sha1": "7ca3fc2bb6f8344729b48ab9885370165c1d4ac6",
+          "size": 4170526
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split1_train101/model.pt",
+          "git_blob_sha1": "2fff516f897129c6769da016a8705d38afe71c99",
+          "size": 9420727
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split1_train101/results.json",
+          "git_blob_sha1": "1cb1157b9ba21e91c405cea937ae3f04473eb5eb",
+          "size": 3835
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split2_train101/config.pkl",
+          "git_blob_sha1": "75cf4e6590d85db77eaa224074af9d3e87c2f84e",
+          "size": 4170526
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split2_train101/model.pt",
+          "git_blob_sha1": "d4f6c8d5c49f4027880e163b6ae5407cc48359f7",
+          "size": 9420727
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split2_train101/results.json",
+          "git_blob_sha1": "c41b834039f3bc292a1876af0d360ba63c5a52f0",
+          "size": 3842
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split3_train101/config.pkl",
+          "git_blob_sha1": "ed77f33032047b00460246e1c95bed1c8b508dea",
+          "size": 4170526
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split3_train101/model.pt",
+          "git_blob_sha1": "8271d8e36d6f239cfc407874ac6e46cdd8d91479",
+          "size": 9420727
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split3_train101/results.json",
+          "git_blob_sha1": "25c59df5f162503f2dcdb48efc70c7531eee0f73",
+          "size": 3841
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split4_train101/config.pkl",
+          "git_blob_sha1": "3cdae0a02c26298582984c1d8015c94d9be8b9a2",
+          "size": 4170526
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split4_train101/model.pt",
+          "git_blob_sha1": "55e9be50cb88cbce4595f28268c562a9a1cbd703",
+          "size": 9420727
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split4_train101/results.json",
+          "git_blob_sha1": "ac2a7e3cc70e17cadad392d74a0d134466ba5c46",
+          "size": 3856
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split5_train101/config.pkl",
+          "git_blob_sha1": "53838f2410b715410aa49857eb889e3a263e4f2d",
+          "size": 4170526
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split5_train101/model.pt",
+          "git_blob_sha1": "b350e5fca1c845706d5813c56ae5f378d903af9c",
+          "size": 9420727
+        },
+        {
+          "path": "results/norman/residual_comparison_v1/gears_residual_set_transformer_split5_train101/results.json",
+          "git_blob_sha1": "54243a32bb1ba70538056d5ce3aed0ded6fc2ec1",
+          "size": 3843
+        },
+        {
+          "path": "scripts/norman_train.py",
+          "git_blob_sha1": "b098b5595bf445cdab0b20cace56f0af4920ffca",
+          "size": 8509
+        }
+      ]
+    }
+  ],
+  "inference": {
+    "device": "cpu",
+    "threads": 4,
+    "batch_size": 32,
+    "order": "Increasing source_row in the identical baseline test-cell allowlist; no shuffling",
+    "control_policy": "One frozen evaluation_control_schedule.csv.gz control per target, input_index=0; require agreement with control_assignments.csv.gz",
+    "coexpression_policy": "Preserve each published shared-batching model source: convolve the gene graph once, then repeat for every cell. Same fixed source-row order and batch size 32 for all three models.",
+    "mean_dtype": "float64",
+    "refit": false,
+    "selection": "Use each published validation mse_de-selected checkpoint without reselection.",
+    "source_policy": "Corrected GEARS/Set Transformer from 858a96bb; residual Set Transformer from b112de08; preserve their separate training-protocol hashes."
+  }
+}
