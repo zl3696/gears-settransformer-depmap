@@ -1,0 +1,10 @@
+{
+  "all_ten_split_scores_identical": true,
+  "both_aggregate_statistics_identical": true,
+  "entrypoint_sha256": "1d57292d7954f0c8d17482bf3e0d4651d0724c0a85c34fa7a5af860a60724bad",
+  "evaluated_source_snapshot_unchanged": true,
+  "portable_source_data_reproduction_matches_committed_predictions": true,
+  "regression_tests_passed": 21,
+  "runtime_outputs_outside_repository": true,
+  "status": "passed"
+}

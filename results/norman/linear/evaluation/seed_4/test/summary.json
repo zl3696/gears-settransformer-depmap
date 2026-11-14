@@ -1,0 +1,70 @@
+{
+  "additive_metrics": {
+    "mse": 0.0012811938602319548,
+    "mse_de": 0.04744195105247315,
+    "pearson": 0.9961165972779044,
+    "pearson_de": 0.9487976683050217
+  },
+  "artifact_sha256": {
+    "evaluation_cells.csv.gz": "b8366f9e9b34e537bd72014c4970c69affecdcecd2301a399b22e242ed45e407",
+    "evaluation_config.json": "f78866d8bee9ee19f350e100e403d5d189b2af11f86e0f5bf19b72b74435dac3",
+    "independent_metrics_check.json": "776df8d151ecbe896900642fba8650f70e417b0837f984398c205b5c647e074f",
+    "per_condition_metrics.csv": "113a5e2909cab58edfd25ca79cd3037c69dd59e039709e3791565a1c520178da",
+    "scoring_genes.csv": "8e162388fa9ede73a15a4a1ebca8b741fc8676ea30942fe5dbd953397bcbbf1b",
+    "scoring_inputs.npz": "8fb736a3db23a7cd61ee6962d0338d42d41a56842108e6e9a8abe1127b6f2771"
+  },
+  "configuration_sha256": "f78866d8bee9ee19f350e100e403d5d189b2af11f86e0f5bf19b72b74435dac3",
+  "created_at": "2026-11-07T13:02:42.185779-05:00",
+  "de_genes_per_pair": 20,
+  "difference_from_additive": {
+    "mse": 0.002146551133398047,
+    "mse_de": 0.19580144383153794,
+    "pearson": -0.006526818385396593,
+    "pearson_de": -0.06933533632019273
+  },
+  "evaluated_cells": 8036,
+  "evaluated_pairs": 26,
+  "expression_genes": 5045,
+  "metrics": {
+    "mse": 0.0034277449936300016,
+    "mse_de": 0.2432433948840111,
+    "pearson": 0.9895897788925078,
+    "pearson_de": 0.8794623319848289
+  },
+  "model": "fitted_linear_pair_adaptation",
+  "neural_comparison_status": "Matched trained GEARS/Set Transformer predictions remain unavailable",
+  "new_expression_rows_decoded_from_h5ad": 0,
+  "new_ranking_keys_decoded": 0,
+  "partition": "test",
+  "prior_exposure": "Overlapping validation panels, existing additive final tests, and descriptive PCA; no claim of globally untouched test outcomes",
+  "prior_validation_exposed_test_conditions": [
+    "BAK1+KLF1",
+    "CBL+TGFBR2",
+    "CEBPB+MAPK1",
+    "CEBPE+SPI1",
+    "CEBPE+ZC3HAV1",
+    "CNN1+MAPK1",
+    "CNN1+UBASH3A",
+    "ELMSAN1+MAP2K3",
+    "ETS2+MAPK1",
+    "FOXF1+FOXL2",
+    "IGDCC3+MAPK1",
+    "IGDCC3+TGFBR2",
+    "IGDCC3+ZBTB25",
+    "MAP2K3+MAP2K6",
+    "PTPN12+SNAI1",
+    "UBASH3B+ZBTB25"
+  ],
+  "raw_h5ad_opened": false,
+  "refit_performed": false,
+  "scorer_warning_counts": {
+    "ConstantInputWarning": 1
+  },
+  "split_seed": 4,
+  "status": "final_test_evaluated",
+  "test_scores_computed": true,
+  "undefined_to_zero_counts": {
+    "pearson_de_undefined_to_zero": 1,
+    "pearson_undefined_to_zero": 0
+  }
+}

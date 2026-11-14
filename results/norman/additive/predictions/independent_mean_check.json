@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "method": "Independent per-cell bincount sums of training-only rows",
+  "conditions": {
+    "ctrl": {
+      "cells": 7353,
+      "max_abs_difference": 0.0
+    },
+    "BAK1": {
+      "cells": 1171,
+      "max_abs_difference": 0.0
+    },
+    "CEBPB": {
+      "cells": 422,
+      "max_abs_difference": 0.0
+    }
+  },
+  "pair_expression_rows_decoded": 0
+}

@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "created_at": "2026-11-12T17:47:23.057819-05:00",
+  "new_test_runs_verified": 15,
+  "historical_neural_test_runs_verified": 10,
+  "synthetic_tests_passed": 13,
+  "independent_aggregate_statistic_rows_verified": 20,
+  "checkpoint_reload_regenerated_runs": [
+    "gears_residual_set_transformer_split1_train101",
+    "gears_set_transformer_split1_train101",
+    "gears_split1_train101"
+  ],
+  "batch_order_and_size_audit": "passed for all three model types",
+  "total_cell_predictions": 105882,
+  "test_source_expression_rows_read": 0,
+  "training_performed": false,
+  "checkpoint_reselection": false,
+  "source_and_protocol_sha256": {
+    "scripts/norman_corrected_neural_test.py": "c56ce654a71b8399e5c05fb954f8ccb6e3c33067a54d49f9d3eb8ca553367882",
+    "configs/norman_corrected_neural_test.json": "c6ae542bc7d792949641dfed4e5e994008af927589cac4dc621ffeef870bbfc2"
+  },
+  "comparison_summary_sha256": "91430225dd0a945a5c5d53aeaa7f560b5ed001d1e8e39fd53e68599a2b6fd757"
+}

@@ -1,0 +1,67 @@
+{
+  "additive_metrics": {
+    "mse": 0.001775231845181551,
+    "mse_de": 0.06091397867664438,
+    "pearson": 0.9949252472482626,
+    "pearson_de": 0.9865967354481788
+  },
+  "artifact_sha256": {
+    "evaluation_cells.csv.gz": "b3fbea19bbbbba7b1bf3e3c4b26a21d858d2fdb0f336dd506cb24ee686174d93",
+    "evaluation_config.json": "ef9aede2315c49bdadca61b518058cbb8fc32f45914dbfcdeb52d3b5735e7492",
+    "independent_metrics_check.json": "fc3469f6b31b51093f0bf00ffe576447180ea1919b00832445e4394caa944f6f",
+    "per_condition_metrics.csv": "94b5dee5ddfc675935d95980ac5356daa80636d86742b21b5f9c522c89a07c4d",
+    "scoring_genes.csv": "c344225ab8da16d2b7d2690ff17ea504a5e44bd36086be61715bbcea8e4565e2",
+    "scoring_inputs.npz": "f3d1c7f7f877ac4f7f39c8f824fc71050a2d80a74808aa4f81acf16278a3d26e"
+  },
+  "configuration_sha256": "ef9aede2315c49bdadca61b518058cbb8fc32f45914dbfcdeb52d3b5735e7492",
+  "created_at": "2026-11-07T13:02:29.876539-05:00",
+  "de_genes_per_pair": 20,
+  "difference_from_additive": {
+    "mse": 0.0031332062366249847,
+    "mse_de": 0.22614539649132825,
+    "pearson": -0.009671819415188354,
+    "pearson_de": -0.08250865475355873
+  },
+  "evaluated_cells": 6901,
+  "evaluated_pairs": 26,
+  "expression_genes": 5045,
+  "metrics": {
+    "mse": 0.004908438081806536,
+    "mse_de": 0.28705937516797264,
+    "pearson": 0.9852534278330742,
+    "pearson_de": 0.9040880806946201
+  },
+  "model": "fitted_linear_pair_adaptation",
+  "neural_comparison_status": "Matched trained GEARS/Set Transformer predictions remain unavailable",
+  "new_expression_rows_decoded_from_h5ad": 0,
+  "new_ranking_keys_decoded": 0,
+  "partition": "test",
+  "prior_exposure": "Overlapping validation panels, existing additive final tests, and descriptive PCA; no claim of globally untouched test outcomes",
+  "prior_validation_exposed_test_conditions": [
+    "BPGM+ZBTB1",
+    "CBFA2T3+FEV",
+    "CBL+PTPN12",
+    "CEBPA+CEBPE",
+    "CEBPA+ZC3HAV1",
+    "CNN1+MAPK1",
+    "DLX2+SNAI1",
+    "DUSP9+IGDCC3",
+    "FOSB+IKZF3",
+    "FOXA3+FOXF1",
+    "FOXF1+HOXB9",
+    "HOXC13+ZC3HAV1",
+    "KLF1+MAP2K6",
+    "MAP2K6+SPI1",
+    "PTPN12+UBASH3B"
+  ],
+  "raw_h5ad_opened": false,
+  "refit_performed": false,
+  "scorer_warning_counts": {},
+  "split_seed": 2,
+  "status": "final_test_evaluated",
+  "test_scores_computed": true,
+  "undefined_to_zero_counts": {
+    "pearson_de_undefined_to_zero": 0,
+    "pearson_undefined_to_zero": 0
+  }
+}

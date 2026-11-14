@@ -124,8 +124,13 @@ python "$repo_dir/scripts/norman_train.py" gears_split1_train101 \
 
 Corrected runs use shared coexpression propagation and separate output paths;
 see [model variants](model-variants.md) for checkpoint compatibility and tests.
-The frozen historical run plan is not modified. TODO: settle final test scoring
-definitions and add the DepMap variants.
+The frozen historical run plan is not modified.
+
+Test scoring of the published checkpoints is done by separate inference-only
+adapters that reuse the saved control schedules and the baselines' scorer: see
+[neural test workflow](norman-neural-test.md) (first round, historical batching)
+and [corrected neural test workflow](norman-corrected-neural-test.md) (second
+round, corrected batching).
 
 Fit any new preprocessing/graphs/loss masks on permitted training observations.
 Keep held-out outcomes and their rankings out of model inputs and tuning. The

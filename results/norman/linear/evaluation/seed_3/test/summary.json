@@ -1,0 +1,72 @@
+{
+  "additive_metrics": {
+    "mse": 0.002581732659020839,
+    "mse_de": 0.07787381405256058,
+    "pearson": 0.9928587111211233,
+    "pearson_de": 0.906335739318937
+  },
+  "artifact_sha256": {
+    "evaluation_cells.csv.gz": "53167e7f5c11be5d444cfb9efe79b1ad6039a1009b4c9df259de4dcc6b7ce81a",
+    "evaluation_config.json": "ecae0276aae07b65523e768e8d24be89a0ec0f36d86b21f8bd144623e7c6ca35",
+    "independent_metrics_check.json": "e3725d753aaa354c71f2e1ffbf01080ead8b8842b02c5da59bc7f5090e757741",
+    "per_condition_metrics.csv": "7e5331a4f551b7214c302f96e72fdf5b1b30a777ff3e042ebf5c517b59efb6df",
+    "scoring_genes.csv": "6992b7884547eca5d9f5202d96fb72d8d006268fede42dc6e1c82a45e5b2d992",
+    "scoring_inputs.npz": "8cc281c08e5b1bdb0a0cf710d10a6d78ec2149c966bbb61d30bbabeaebb86af3"
+  },
+  "configuration_sha256": "ecae0276aae07b65523e768e8d24be89a0ec0f36d86b21f8bd144623e7c6ca35",
+  "created_at": "2026-11-07T13:02:36.084121-05:00",
+  "de_genes_per_pair": 20,
+  "difference_from_additive": {
+    "mse": 0.0030840265368266228,
+    "mse_de": 0.2259793969233573,
+    "pearson": -0.009525302887799625,
+    "pearson_de": -0.0739204925923318
+  },
+  "evaluated_cells": 6340,
+  "evaluated_pairs": 26,
+  "expression_genes": 5045,
+  "metrics": {
+    "mse": 0.005665759195847462,
+    "mse_de": 0.3038532109759179,
+    "pearson": 0.9833334082333237,
+    "pearson_de": 0.8324152467266052
+  },
+  "model": "fitted_linear_pair_adaptation",
+  "neural_comparison_status": "Matched trained GEARS/Set Transformer predictions remain unavailable",
+  "new_expression_rows_decoded_from_h5ad": 0,
+  "new_ranking_keys_decoded": 0,
+  "partition": "test",
+  "prior_exposure": "Overlapping validation panels, existing additive final tests, and descriptive PCA; no claim of globally untouched test outcomes",
+  "prior_validation_exposed_test_conditions": [
+    "CBL+UBASH3A",
+    "CBL+UBASH3B",
+    "CEBPA+CEBPE",
+    "CEBPA+JUN",
+    "CEBPB+CEBPE",
+    "CEBPB+FOSB",
+    "CEBPB+LYL1",
+    "CEBPE+CNN1",
+    "CEBPE+ETS2",
+    "CEBPE+ZC3HAV1",
+    "CLDN6+KLF1",
+    "COL2A1+KLF1",
+    "ELMSAN1+MAP2K3",
+    "FOXA1+FOXL2",
+    "HOXC13+ZC3HAV1",
+    "IKZF3+MAP2K6",
+    "KIF18B+KIF2C",
+    "PTPN12+ZBTB25"
+  ],
+  "raw_h5ad_opened": false,
+  "refit_performed": false,
+  "scorer_warning_counts": {
+    "ConstantInputWarning": 2
+  },
+  "split_seed": 3,
+  "status": "final_test_evaluated",
+  "test_scores_computed": true,
+  "undefined_to_zero_counts": {
+    "pearson_de_undefined_to_zero": 2,
+    "pearson_undefined_to_zero": 0
+  }
+}
