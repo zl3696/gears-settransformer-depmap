@@ -104,8 +104,6 @@ scoring are documented in [docs/norman-additive.md](docs/norman-additive.md),
 rounds), `feature/residual-set-transformer`, `data-split-norman`,
 `additive-baseline-norman`, `linear-baseline-norman`, `norman-neural-test` and
 `norman-corrected-residual_transformer-test` (test evaluations).
-`feature/additive-residual` implements an additive-baseline-plus-residual variant
-that has not been trained.
 
 ## Next steps
 
