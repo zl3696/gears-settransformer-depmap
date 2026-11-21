@@ -255,6 +255,20 @@ class GEARS_Model(torch.nn.Module):
                 self.depmap_projection = nn.Linear(features.shape[1], hidden_size)
                 nn.init.zeros_(self.depmap_projection.weight)
                 nn.init.zeros_(self.depmap_projection.bias)
+
+        self.use_cell_line = args.get('use_cell_line', False)
+        if not isinstance(self.use_cell_line, bool):
+            raise ValueError('use_cell_line must be a boolean')
+        if self.use_cell_line:
+            names = args.get('cell_line_names')
+            if (not isinstance(names, (list, tuple)) or not names
+                    or any(not isinstance(n, str) or not n.strip() for n in names)
+                    or len(set(names)) != len(names)):
+                raise ValueError('Enabled cell-line embedding requires unique cell_line_names')
+            self.cell_line_names = list(names)
+            with torch.random.fork_rng(devices=[]):
+                self.cell_line_embedding = nn.Embedding(len(names), hidden_size)
+                nn.init.zeros_(self.cell_line_embedding.weight)
         
     def _aggregate_set(self, pert_global_emb, pert_index):
         """Pool nonempty perturbation sets; controls never enter attention."""
@@ -280,6 +294,17 @@ class GEARS_Model(torch.nn.Module):
         Forward pass of the model
         """
         x, pert_idx = data.x, data.pert_idx
+        cell_line_ids = None
+        if self.use_cell_line:
+            cell_line_ids = getattr(data, 'cell_line_id', None)
+            if (not isinstance(cell_line_ids, torch.Tensor) or cell_line_ids.dtype != torch.long
+                    or cell_line_ids.shape != (data.num_graphs,)
+                    or torch.any(cell_line_ids < 0)
+                    or torch.any(cell_line_ids >= len(self.cell_line_names))):
+                raise ValueError('Expected one valid integer cell_line_id per graph')
+            labels = getattr(data, 'cell_line', None)
+            if labels is None or list(labels) != [self.cell_line_names[i] for i in cell_line_ids.tolist()]:
+                raise ValueError('Cell-line labels do not match the saved vocabulary IDs')
         if self.no_perturb:
             out = x.reshape(-1,1)
             out = torch.split(torch.flatten(out), self.num_genes)           
@@ -367,6 +392,13 @@ class GEARS_Model(torch.nn.Module):
                     corrections = self.set_residual_projection(pooled)
                     for row, sample in enumerate(samples):
                         base_emb[sample] = base_emb[sample] + corrections[row]
+
+            if self.use_cell_line and pert_index.shape[0] != 0:
+                # Add context once per perturbed cell, independent of set size
+                # and aggregation choice. Controls bypass this perturbation term.
+                active = pert_index[0].unique().to(base_emb.device)
+                context = self.cell_line_embedding(cell_line_ids[active]).unsqueeze(1)
+                base_emb = base_emb.index_add(0, active, context.expand(-1, self.num_genes, -1))
 
             base_emb = base_emb.reshape(num_graphs * self.num_genes, -1)
             base_emb = self.bn_pert_base(base_emb)

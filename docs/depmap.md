@@ -24,8 +24,9 @@ Original BatchNorm behavior, decoder, loss, and GO propagation are preserved.
 DepMap parameters or buffers and reads no feature file. An enabled model must
 receive either `depmap_path` or a validated `AlignedDepMap` as `depmap_data`.
 
-This is a gene prior, not a cell-line identifier. Cell-line label embeddings and
-joint Replogle K562/RPE1 training are a separate, unimplemented next phase.
+This is a gene prior, not a cell-line identifier. Optional
+[cell-line label embeddings](cell-line-embedding.md) are implemented on the
+subsequent feature branch; full joint Replogle K562/RPE1 training remains pending.
 
 ## Feature preparation and alignment
 

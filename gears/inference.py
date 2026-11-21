@@ -6,6 +6,7 @@ from sklearn.metrics import r2_score
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics import mean_squared_error as mse
 from sklearn.metrics import mean_absolute_error as mae
+from .cell_line import results_for_cell_line
 
 def evaluate(loader, model, uncertainty, device):
     """
@@ -22,11 +23,14 @@ def evaluate(loader, model, uncertainty, device):
     de_idx_list = []
     results = {}
     logvar = []
+    cell_lines = []
     
     for itr, batch in enumerate(loader):
 
         batch.to(device)
         pert_cat.extend(batch.pert)
+        if hasattr(batch, 'cell_line'):
+            cell_lines.extend(batch.cell_line)
 
         with torch.no_grad():
             if uncertainty:
@@ -46,6 +50,10 @@ def evaluate(loader, model, uncertainty, device):
 
     # all genes
     results['pert_cat'] = np.array(pert_cat)
+    if cell_lines:
+        if len(cell_lines) != len(pert_cat):
+            raise ValueError('Evaluation cannot mix labeled and unlabeled cell graphs')
+        results['cell_line'] = np.array(cell_lines)
     pred = torch.stack(pred)
     truth = torch.stack(truth)
     results['pred']= pred.detach().cpu().numpy()
@@ -68,6 +76,18 @@ def compute_metrics(results):
     Given results from a model run and the ground truth, compute metrics
 
     """
+    if 'cell_line' in results:
+        # A perturbation in two lines is two contexts, never a pooled mean.
+        contexts = {}
+        for line in np.unique(results['cell_line']):
+            _, perts = compute_metrics(results_for_cell_line(results, line))
+            contexts.update({(line, pert): values for pert, values in perts.items()})
+        metrics = {}
+        for name in ('mse', 'pearson', 'mse_de', 'pearson_de'):
+            metrics[name] = np.mean([values[name] for (_, pert), values in contexts.items()
+                                     if not name.endswith('_de') or pert != 'ctrl'])
+        return metrics, contexts
+
     metrics = {}
     metrics_pert = {}
 
@@ -135,6 +155,17 @@ def normalized_mse_de(results, ctrl_expression):
     ctrl_expression: np.ndarray
         mean control expression over all genes
     """
+    if 'cell_line' in results:
+        if not isinstance(ctrl_expression, dict):
+            raise ValueError('Labeled evaluation requires cell-line-specific control means')
+        total, count = 0., 0
+        for line in np.unique(results['cell_line']):
+            subset = results_for_cell_line(results, line)
+            weight = len(set(subset['pert_cat']) - {'ctrl'})
+            if weight:
+                total += weight * normalized_mse_de(subset, ctrl_expression[line])
+                count += weight
+        return total / count if count else np.nan
     ratios = []
     for pert in np.unique(results['pert_cat']):
         if pert == 'ctrl':

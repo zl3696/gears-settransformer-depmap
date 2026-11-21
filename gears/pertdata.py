@@ -88,6 +88,8 @@ class PertData:
         # Frozen split protocol attributes
         self.frozen_split_dir = None
         self.control_rows = None
+        self.cell_line_key = None
+        self.cell_line_names = None
 
         # Split attributes
         self.split = None
@@ -136,7 +138,8 @@ class PertData:
         self.pert_names = np.unique(list(gene2go.keys()))
         self.node_map_pert = {x: it for it, x in enumerate(self.pert_names)}
             
-    def load(self, data_name = None, data_path = None, frozen_split_dir = None):
+    def load(self, data_name = None, data_path = None, frozen_split_dir = None,
+             cell_line_key = None, cell_line_names = None, cell_line_seed = 0):
         """
         Load existing dataloader
         Use data_name for loading 'norman', 'adamson', 'dixit' datasets
@@ -152,6 +155,13 @@ class PertData:
             Path to a frozen split snapshot (e.g. splits/norman). If given, the
             gene and perturbation order are checked against it, and each cell is
             paired with its saved control instead of a random one
+        cell_line_key: str or None
+            Opt into labeled graphs and line-matched controls using this obs
+            column. Bypasses legacy graph caches; independent of model switches.
+        cell_line_names: list or None
+            Ordered label vocabulary; defaults to sorted observed labels.
+        cell_line_seed: int
+            Seed for reproducible line-matched control sampling.
 
         Returns
         -------
@@ -159,6 +169,8 @@ class PertData:
 
         """
         
+        if cell_line_names is not None and cell_line_key is None:
+            raise ValueError('cell_line_names requires cell_line_key')
         if data_name in ['norman', 'adamson', 'dixit', 
                          'replogle_k562_essential', 
                          'replogle_rpe1_essential']:
@@ -192,6 +204,10 @@ class PertData:
                              "replogle_k562 or replogle_rpe1 "
                              "or a path to an h5ad file")
         
+        self.cell_line_key = None
+        self.cell_line_names = None
+        self.control_rows = None
+        self.frozen_split_dir = None
         self.set_pert_genes()
         print_sys('These perturbations are not in the GO graph and their '
                   'perturbation can thus not be predicted')
@@ -204,6 +220,11 @@ class PertData:
         filter_go = self.adata.obs[self.adata.obs.condition.apply(
                               lambda x: filter_pert_in_go(x, self.pert_names))]
         self.adata = self.adata[filter_go.index.values, :]
+        if cell_line_key is not None:
+            if frozen_split_dir is not None:
+                self.load_frozen_protocol(frozen_split_dir)
+            self.prepare_cell_lines(cell_line_key, cell_line_names, cell_line_seed)
+            return
         pyg_path = os.path.join(data_path, 'data_pyg')
         if not os.path.exists(pyg_path):
             os.mkdir(pyg_path)
@@ -230,6 +251,16 @@ class PertData:
             pickle.dump(self.dataset_processed, open(dataset_fname, "wb"))    
             print_sys("Done!")
             
+    def prepare_cell_lines(self, cell_line_key='cell_type', cell_line_names=None, seed=0):
+        """Rebuild loaded data with explicit labels and matched controls.
+
+        Call before get_dataloader. Existing condition splits retain all cell
+        lines of a perturbation together; this does not generate gene-line splits.
+        See docs/cell-line-embedding.md for the processed-data contract.
+        """
+        from .cell_line import prepare_cell_lines
+        prepare_cell_lines(self, cell_line_key, cell_line_names, seed)
+
     def load_frozen_protocol(self, split_dir):
         """
         Check the loaded data against a frozen split snapshot and read its
@@ -299,6 +330,10 @@ class PertData:
 
         """
         
+        self.cell_line_key = None
+        self.cell_line_names = None
+        self.control_rows = None
+        self.frozen_split_dir = None
         if 'condition' not in adata.obs.columns.values:
             raise ValueError("Please specify condition")
         if 'gene_name' not in adata.var.columns.values:

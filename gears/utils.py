@@ -388,17 +388,17 @@ def uncertainty_loss_fct(pred, logvar, y, perts, reg = 0.1, ctrl = None,
             logvar_p = logvar[np.where(perts==p)[0]]
                          
         # uncertainty based loss
-        losses += torch.sum((pred_p - y_p)**(2 + gamma) + reg * torch.exp(
+        losses = losses + torch.sum((pred_p - y_p)**(2 + gamma) + reg * torch.exp(
             -logvar_p)  * (pred_p - y_p)**(2 + gamma))/pred_p.shape[0]/pred_p.shape[1]
                          
         # direction loss                 
         if p!= 'ctrl':
-            losses += torch.sum(direction_lambda *
+            losses = losses + torch.sum(direction_lambda *
                                 (torch.sign(y_p - ctrl[retain_idx]) -
                                  torch.sign(pred_p - ctrl[retain_idx]))**2)/\
                                  pred_p.shape[0]/pred_p.shape[1]
         else:
-            losses += torch.sum(direction_lambda *
+            losses = losses + torch.sum(direction_lambda *
                                 (torch.sign(y_p - ctrl) -
                                  torch.sign(pred_p - ctrl))**2)/\
                                  pred_p.shape[0]/pred_p.shape[1]
@@ -476,7 +476,8 @@ def create_cell_graph_for_prediction(X, pert_idx, pert_gene):
     
 
 def create_cell_graph_dataset_for_prediction(pert_gene, ctrl_adata, gene_names,
-                                             device, num_samples = 300):
+                                             device, num_samples = 300,
+                                             cell_line = None, cell_line_id = None):
     """
     Create a perturbation specific cell graph dataset for inference
 
@@ -492,9 +493,14 @@ def create_cell_graph_dataset_for_prediction(pert_gene, ctrl_adata, gene_names,
     # Get the indices (and signs) of applied perturbation
     pert_idx = [np.where(p == np.array(gene_names))[0][0] for p in pert_gene]
 
-    Xs = ctrl_adata[np.random.randint(0, len(ctrl_adata), num_samples), :].X.toarray()
+    Xs = ctrl_adata[np.random.randint(0, len(ctrl_adata), num_samples), :].X
+    Xs = Xs.toarray() if hasattr(Xs, 'toarray') else np.asarray(Xs)
     # Create cell graphs
     cell_graphs = [create_cell_graph_for_prediction(X, pert_idx, pert_gene).to(device) for X in Xs]
+    if cell_line is not None:
+        for graph in cell_graphs:
+            graph.cell_line = cell_line
+            graph.cell_line_id = torch.tensor([cell_line_id], dtype=torch.long, device=device)
     return cell_graphs
 
 ##

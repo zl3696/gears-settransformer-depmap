@@ -80,6 +80,10 @@ separate six-mode run configuration and feature/checkpoint contract are in
 
 ## Checks and commands
 
+`feature/cell-line-embedding` follows DepMap at `b24cd81`. Its independent
+`use_cell_line` switch, label-aware data preparation, and experiment limitations
+are documented in [Cell-line embeddings](cell-line-embedding.md).
+
 From any directory, set `repo_dir` to an absolute checkout path and use an
 environment with `requirements.txt` and pytest installed:
 

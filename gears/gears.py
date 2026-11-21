@@ -9,6 +9,7 @@ from torch.optim.lr_scheduler import StepLR
 
 from .model import GEARS_Model
 from .depmap import AlignedDepMap, align_features, load_features
+from .cell_line import context_statistics, cell_line_loss, results_for_cell_line
 from .inference import evaluate, compute_metrics, deeper_analysis, \
                   non_dropout_analysis, normalized_mse_de
 from .utils import loss_fct, uncertainty_loss_fct, parse_any_pert, \
@@ -83,15 +84,24 @@ class GEARS:
         self.default_pert_graph = pert_data.default_pert_graph
         self.saved_pred = {}
         self.saved_logvar_sum = {}
+        self.cell_line_key = getattr(pert_data, 'cell_line_key', None)
+        self.cell_line_names = getattr(pert_data, 'cell_line_names', None)
+        self.cell_line_control_seed = getattr(pert_data, 'cell_line_control_seed', None)
+        if (self.cell_line_key is None and 'cell_type' in self.adata.obs
+                and self.adata.obs['cell_type'].nunique() > 1):
+            raise ValueError('Mixed cell lines require PertData.prepare_cell_lines before get_dataloader')
         
         self.ctrl_expression = torch.tensor(
             np.mean(self.adata.X[(self.adata.obs.condition == 'ctrl').values],
                     axis=0)).reshape(-1, ).to(self.device)
         pert_full_id2pert = dict(self.adata.obs[['condition_name', 'condition']].values)
         self.dict_filter = {pert_full_id2pert[i]: j for i, j in
-                            self.adata.uns['non_zeros_gene_idx'].items() if
+                            self.adata.uns.get('non_zeros_gene_idx', {}).items() if
                             i in pert_full_id2pert}
         self.ctrl_adata = self.adata[self.adata.obs['condition'] == 'ctrl']
+        if self.cell_line_key is not None:
+            self.ctrl_by_cell_line, self.filters_by_cell_line = context_statistics(
+                self.adata, self.cell_line_key, self.cell_line_names, self.device)
         
         gene_dict = {g:i for i,g in enumerate(self.gene_list)}
         self.pert2gene = {p: gene_dict[pert] for p, pert in
@@ -121,7 +131,8 @@ class GEARS:
                 'pert_agg': "'sum', 'set_transformer', or 'residual_set_transformer'; default 'sum'",
                 'seed': 'seed for model initialization and training batch order, default None',
                 'coexpression_batching': "'shared' for corrected batching or 'legacy' for historical checkpoints",
-                'use_depmap': 'optional fixed DepMap priors with a learned residual, default False'
+                'use_depmap': 'optional fixed DepMap priors with a learned residual, default False',
+                'use_cell_line': 'optional learned cell-line label embedding, default False'
                }
     
     def model_initialize(self, hidden_size = 64,
@@ -145,6 +156,8 @@ class GEARS:
                          use_depmap = False,
                          depmap_path = None,
                          depmap_data = None,
+                         use_cell_line = False,
+                         cell_line_metadata = None,
                          **kwargs
                         ):
         """
@@ -201,12 +214,28 @@ class GEARS:
         depmap_data: AlignedDepMap
             Validated in-memory alternative to depmap_path, also used for
             self-contained checkpoint restoration.
+        use_cell_line: bool
+            Add a learned label embedding after perturbation aggregation.
+            Requires PertData prepared with cell-line labels; independent of DepMap.
+        cell_line_metadata: dict or None
+            Saved label vocabulary and gene axes, validated during restoration.
 
         Returns
         -------
         None
         """
         
+        if not isinstance(use_cell_line, bool):
+            raise ValueError('use_cell_line must be a boolean')
+        if use_cell_line and self.cell_line_key is None:
+            raise ValueError('Enabled cell-line embedding requires PertData.prepare_cell_lines before get_dataloader')
+        context_metadata = None
+        if self.cell_line_key is not None:
+            context_metadata = dict(label_key=self.cell_line_key, names=list(self.cell_line_names),
+                                    expression_genes=list(self.gene_list), perturbation_genes=list(self.pert_list))
+        if cell_line_metadata is not None and cell_line_metadata != context_metadata:
+            raise ValueError('Cell-line checkpoint label vocabulary or gene order differs from the data')
+
         if not isinstance(use_depmap, bool):
             raise ValueError('use_depmap must be a boolean')
         aligned = None
@@ -243,8 +272,11 @@ class GEARS:
                        'pert_agg': pert_agg,
                        'seed': seed,
                        'coexpression_batching': coexpression_batching,
-                       'use_depmap': use_depmap
+                       'use_depmap': use_depmap,
+                       'use_cell_line': use_cell_line
                       }
+        if context_metadata is not None:
+            self.config['cell_line_metadata'] = context_metadata
         if aligned is not None:
             self.config['depmap_metadata'] = deepcopy(aligned.metadata)
             self.config['depmap_metadata']['expression_genes'] = list(self.gene_list)
@@ -289,6 +321,8 @@ class GEARS:
         if seed is not None:
             set_seed(seed)
         model_args = dict(self.config)
+        if use_cell_line:
+            model_args['cell_line_names'] = list(self.cell_line_names)
         if aligned is not None:
             model_args.update(depmap_features=aligned.values, depmap_mask=aligned.mask)
         self.model = GEARS_Model(model_args).to(self.device)
@@ -328,6 +362,8 @@ class GEARS:
             state_dict = new_state_dict
 
         metadata = config.pop('depmap_metadata', None)
+        if config.get('use_cell_line', False) and not isinstance(config.get('cell_line_metadata'), dict):
+            raise ValueError('Cell-line checkpoint lacks label vocabulary metadata')
         if config.get('use_depmap', False):
             if not isinstance(metadata, dict) or not {'depmap_features', 'depmap_mask'} <= state_dict.keys():
                 raise ValueError('DepMap checkpoint lacks saved features, mask or metadata')
@@ -362,6 +398,10 @@ class GEARS:
         if self.config is None:
             raise ValueError('No model is initialized...')
 
+        if self.config.get('use_cell_line', False):
+            if self.best_model.cell_line_names != self.config['cell_line_metadata']['names']:
+                raise ValueError('Cell-line checkpoint vocabulary differs from the trained model')
+
         if self.config.get('use_depmap', False):
             AlignedDepMap(self.best_model.depmap_features.detach().cpu().numpy(),
                           self.best_model.depmap_mask.detach().cpu().numpy(),
@@ -372,7 +412,7 @@ class GEARS:
        
         torch.save(self.best_model.state_dict(), os.path.join(path, 'model.pt'))
     
-    def predict(self, pert_list):
+    def predict(self, pert_list, cell_line=None):
         """
         Predict the transcriptome given a list of genes/gene combinations being
         perturbed
@@ -381,6 +421,9 @@ class GEARS:
         ----------
         pert_list: list
             list of genes/gene combiantions to be perturbed
+        cell_line: str or None
+            Required for prepared multi-line data, even when labels are disabled.
+            Selects matching controls and, when enabled, the learned label.
 
         Returns
         -------
@@ -393,7 +436,17 @@ class GEARS:
         ## given a list of single/combo genes, return the transcriptome
         ## if uncertainty mode is on, also return uncertainty score.
         
-        self.ctrl_adata = self.adata[self.adata.obs['condition'] == 'ctrl']
+        ctrl_adata = self.adata[self.adata.obs['condition'] == 'ctrl']
+        line_id = None
+        if self.cell_line_key is not None:
+            if cell_line is None and len(self.cell_line_names) == 1:
+                cell_line = self.cell_line_names[0]
+            if cell_line not in self.cell_line_names:
+                raise ValueError(f'Choose cell_line from {self.cell_line_names}; unseen lines are unsupported')
+            line_id = self.cell_line_names.index(cell_line)
+            ctrl_adata = ctrl_adata[ctrl_adata.obs[self.cell_line_key] == cell_line]
+        elif cell_line is not None:
+            raise ValueError('Cell-line prediction requires prepared cell-line data')
         for pert in pert_list:
             for i in pert:
                 if i not in self.pert_list:
@@ -410,17 +463,17 @@ class GEARS:
         
         from torch_geometric.data import DataLoader
         for pert in pert_list:
-            try:
-                #If prediction is already saved, then skip inference
-                results_pred['_'.join(pert)] = self.saved_pred['_'.join(pert)]
+            result_key = '_'.join(pert)
+            cache_key = (cell_line, result_key) if cell_line is not None else result_key
+            if cache_key in self.saved_pred:
+                results_pred[result_key] = self.saved_pred[cache_key]
                 if self.config['uncertainty']:
-                    results_logvar_sum['_'.join(pert)] = self.saved_logvar_sum['_'.join(pert)]
+                    results_logvar_sum[result_key] = self.saved_logvar_sum[cache_key]
                 continue
-            except:
-                pass
             
-            cg = create_cell_graph_dataset_for_prediction(pert, self.ctrl_adata,
-                                                    self.pert_list, self.device)
+            cg = create_cell_graph_dataset_for_prediction(pert, ctrl_adata,
+                                                    self.pert_list, self.device,
+                                                    cell_line=cell_line, cell_line_id=line_id)
             loader = DataLoader(cg, 300, shuffle = False)
             batch = next(iter(loader))
             batch.to(self.device)
@@ -434,11 +487,11 @@ class GEARS:
                     p = self.best_model(batch)
                     
             results_pred['_'.join(pert)] = np.mean(p.detach().cpu().numpy(), axis = 0)
+            self.saved_pred[cache_key] = results_pred[result_key]
+            if self.config['uncertainty']:
+                self.saved_logvar_sum[cache_key] = results_logvar_sum[result_key]
                 
-        self.saved_pred.update(results_pred)
-        
         if self.config['uncertainty']:
-            self.saved_logvar_sum.update(results_logvar_sum)
             return results_pred, results_logvar_sum
         else:
             return results_pred
@@ -461,6 +514,8 @@ class GEARS:
 
         """
 
+        if self.cell_line_key is not None and len(self.cell_line_names) > 1:
+            raise ValueError('GI_predict assumes one cell line; use predict(..., cell_line=...) for labeled data')
         ## if uncertainty mode is on, also return uncertainty score.
         try:
             # If prediction is already saved, then skip inference
@@ -503,6 +558,8 @@ class GEARS:
 
         """
 
+        if self.cell_line_key is not None and len(self.cell_line_names) > 1:
+            raise ValueError('plot_perturbation assumes one cell line; use predict(..., cell_line=...) for labeled data')
         import seaborn as sns
         import matplotlib.pyplot as plt
         
@@ -584,6 +641,18 @@ class GEARS:
 
         train_loader = self.dataloader['train_loader']
         val_loader = self.dataloader['val_loader']
+        if self.cell_line_key is not None:
+            trained_lines = set()
+            for graph in train_loader.dataset:
+                line = getattr(graph, 'cell_line', None)
+                line_id = getattr(graph, 'cell_line_id', None)
+                if (line not in self.cell_line_names or line_id is None
+                        or line_id.numel() != 1 or line_id.item() != self.cell_line_names.index(line)):
+                    raise ValueError('Training graphs have missing or mismatched cell-line labels')
+                if graph.pert != 'ctrl':
+                    trained_lines.add(line)
+            if self.config['use_cell_line'] and trained_lines != set(self.cell_line_names):
+                raise ValueError('Each cell-line label must have perturbed examples in training')
             
         self.model = self.model.to(self.device)
         best_model = deepcopy(self.model)
@@ -592,6 +661,8 @@ class GEARS:
 
         min_val = np.inf
         ctrl_expression = self.ctrl_expression.cpu().numpy()
+        if self.cell_line_key is not None:
+            ctrl_expression = {line: values.cpu().numpy() for line, values in self.ctrl_by_cell_line.items()}
         self.val_history = []
         self.best_epoch = None
         print_sys('Start Training...')
@@ -605,13 +676,20 @@ class GEARS:
                 y = batch.y
                 if self.config['uncertainty']:
                     pred, logvar = self.model(batch)
+                else:
+                    pred, logvar = self.model(batch), None
+                if self.cell_line_key is not None:
+                    loss = cell_line_loss(pred, y, batch.pert, batch.cell_line,
+                                         self.ctrl_by_cell_line, self.filters_by_cell_line,
+                                         self.config['direction_lambda'], logvar,
+                                         self.config['uncertainty_reg'])
+                elif self.config['uncertainty']:
                     loss = uncertainty_loss_fct(pred, logvar, y, batch.pert,
                                       reg = self.config['uncertainty_reg'],
                                       ctrl = self.ctrl_expression, 
                                       dict_filter = self.dict_filter,
                                       direction_lambda = self.config['direction_lambda'])
                 else:
-                    pred = self.model(batch)
                     loss = loss_fct(pred, y, batch.pert,
                                   ctrl = self.ctrl_expression, 
                                   dict_filter = self.dict_filter,
@@ -668,6 +746,8 @@ class GEARS:
                 
         print_sys("Done!")
         self.best_model = best_model
+        self.saved_pred = {}
+        self.saved_logvar_sum = {}
 
         if run_test:
             self.test()
@@ -701,6 +781,22 @@ class GEARS:
                 self.wandb.log({'test_' + m: test_metrics[m],
                            'test_de_'+m: test_metrics[m + '_de']                     
                           })
+
+        if self.cell_line_key is not None:
+            # Legacy GI/dropout reports assume a single cell line. Expose core
+            # context metrics and separate line reports instead of pooling them.
+            controls = {line: values.cpu().numpy() for line, values in self.ctrl_by_cell_line.items()}
+            test_metrics['normalized_mse_de'] = normalized_mse_de(test_res, controls)
+            self.test_results = test_res
+            self.test_metrics = test_metrics
+            self.test_pert_metrics = test_pert_res
+            self.test_metrics_by_cell_line = {}
+            for line in np.unique(test_res['cell_line']):
+                subset = results_for_cell_line(test_res, line)
+                metrics, _ = compute_metrics(subset)
+                metrics['normalized_mse_de'] = normalized_mse_de(subset, controls[line])
+                self.test_metrics_by_cell_line[line] = metrics
+            return test_metrics
                 
         out = deeper_analysis(self.adata, test_res)
         out_non_dropout = non_dropout_analysis(self.adata, test_res)
