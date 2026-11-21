@@ -28,10 +28,11 @@ training outputs. Do not interpret the correction as removing BatchNorm.
   uses the existing attention replacement. `"residual_set_transformer"` keeps
   original fusion and adds the correction described below. All three use the
   same batching policy.
-- `fix/coexpression-batching` starts from `set-transformer` at `b2390d2`.
+- In the current remote history, `fix/coexpression-batching` starts from
+  `set-transformer` at `6813073`.
   The original GEARS reference is `master` at `f374e43`.
 - `feature/residual-set-transformer` starts from the tested batching correction
-  at `c154fa1`. Run all three comparison models from this second branch/commit;
+  at `8edf2ff`. Run all three comparison models from this second branch/commit;
   branches organize development, configuration selects the experiment.
 
 `configs/norman_runs.csv` lists corrected runs, selected by
@@ -69,6 +70,13 @@ The original replacement mode remains available as the second comparison arm.
 Checkpoint configuration records `pert_agg`; projection and attention weights
 are saved in `model.pt`. Existing `sum` and replacement checkpoints retain their
 parameter names and behavior. No DepMap features are used in these experiments.
+
+## DepMap feature branch
+
+`feature/depmap-residual` starts from the current remote residual branch at
+`bd5adac`. `use_depmap` is independent of all three aggregation modes. Its
+separate six-mode run configuration and feature/checkpoint contract are in
+[DepMap](depmap.md). Existing Norman plans and splits are preserved.
 
 ## Checks and commands
 

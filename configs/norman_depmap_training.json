@@ -1,0 +1,65 @@
+{
+  "schema_version": 3,
+  "run_plan": "configs/norman_depmap_runs.csv",
+  "split_dir": "splits/norman",
+  "split_bundle_sha256": "e1e90cbac40b2ea90695b761af5c5f4103baf00ff6380dcd0e3571c65891ec34",
+  "split_configuration_sha256": "ae25a8afa62d7c79f62d43130e8cd5c87a9aae1c2a5a4c323a924eaeb3ca3d1d",
+  "training_seed": 101,
+  "models": {
+    "gears": {
+      "pert_agg": "sum",
+      "use_depmap": false
+    },
+    "gears_depmap": {
+      "pert_agg": "sum",
+      "use_depmap": true
+    },
+    "gears_set_transformer": {
+      "pert_agg": "set_transformer",
+      "use_depmap": false
+    },
+    "gears_set_transformer_depmap": {
+      "pert_agg": "set_transformer",
+      "use_depmap": true
+    },
+    "gears_residual_set_transformer": {
+      "pert_agg": "residual_set_transformer",
+      "use_depmap": false
+    },
+    "gears_residual_set_transformer_depmap": {
+      "pert_agg": "residual_set_transformer",
+      "use_depmap": true
+    }
+  },
+  "model": {
+    "hidden_size": 64,
+    "num_go_gnn_layers": 1,
+    "num_gene_gnn_layers": 1,
+    "decoder_hidden_size": 16,
+    "uncertainty": false,
+    "direction_lambda": 0.1,
+    "coexpression_batching": "shared"
+  },
+  "graphs": {
+    "coexpress_threshold": 0.4,
+    "num_similar_genes_co_express_graph": 20,
+    "num_similar_genes_go_graph": 20,
+    "default_pert_graph": true
+  },
+  "training": {
+    "epochs": 20,
+    "lr": 0.001,
+    "weight_decay": 0.0005,
+    "scheduler": "StepLR(step_size=1, gamma=0.5), fixed in GEARS.train",
+    "batch_size": 32,
+    "test_batch_size": 128
+  },
+  "checkpoint_selection": {
+    "metric": "mse_de",
+    "definition": "Original GEARS rule: mean over validation pairs of MSE(predicted mean, true mean) on each pair's top 20 DE genes; the epoch with the lowest value is kept. normalized_mse_de is still recorded per epoch but not used for selection"
+  },
+  "pending": [
+    "Full DepMap benchmark training and test evaluation",
+    "Cell-line conditioning and joint Replogle K562/RPE1 workflow"
+  ]
+}

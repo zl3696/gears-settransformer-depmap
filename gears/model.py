@@ -229,6 +229,32 @@ class GEARS_Model(torch.nn.Module):
         # uncertainty mode
         if self.uncertainty:
             self.uncertainty_w = MLP([hidden_size, hidden_size*2, hidden_size, 1], last_layer_act='linear')
+
+        self.use_depmap = args.get('use_depmap', False)
+        if not isinstance(self.use_depmap, bool):
+            raise ValueError('use_depmap must be a boolean')
+        if self.use_depmap:
+            if 'depmap_features' not in args or 'depmap_mask' not in args:
+                raise ValueError('Enabled DepMap requires aligned features and an availability mask')
+            features = torch.as_tensor(args['depmap_features'], dtype=torch.float32).detach().clone()
+            mask = torch.as_tensor(args['depmap_mask']).detach().clone()
+            if (features.ndim != 2 or features.shape[0] != self.num_perts
+                    or features.shape[1] == 0 or not torch.isfinite(features).all()):
+                raise ValueError('DepMap features must be finite [num_perts, feature_dim] values')
+            if mask.dtype != torch.bool or mask.shape != (self.num_perts,) or not mask.any():
+                raise ValueError('DepMap mask must be boolean [num_perts] with at least one match')
+            if torch.any(features[~mask] != 0):
+                raise ValueError('Unavailable DepMap rows must contain zeros')
+            self.register_buffer('depmap_features', features)
+            self.register_buffer('depmap_mask', mask)
+            # Buffers own the data; do not duplicate the large NumPy inputs in
+            # args or in every best-model deepcopy during training.
+            self.args = {k: v for k, v in args.items() if k not in ('depmap_features', 'depmap_mask')}
+            # Preserve shared initialization and the subsequent training RNG stream.
+            with torch.random.fork_rng(devices=[]):
+                self.depmap_projection = nn.Linear(features.shape[1], hidden_size)
+                nn.init.zeros_(self.depmap_projection.weight)
+                nn.init.zeros_(self.depmap_projection.bias)
         
     def _aggregate_set(self, pert_global_emb, pert_index):
         """Pool nonempty perturbation sets; controls never enter attention."""
@@ -299,6 +325,14 @@ class GEARS_Model(torch.nn.Module):
                 pert_global_emb = layer(pert_global_emb, self.G_sim, self.G_sim_weight)
                 if idx < self.num_layers - 1:
                     pert_global_emb = pert_global_emb.relu()
+
+            if self.use_depmap and pert_index.shape[0] != 0:
+                # Mask AFTER the affine projection: missing genes must not get its bias.
+                # Only project genes used in this batch, not the entire GO vocabulary.
+                selected = pert_index[1].to(pert_global_emb.device).unique()
+                correction = self.depmap_projection(self.depmap_features[selected])
+                correction = self.depmap_mask[selected].unsqueeze(1) * correction
+                pert_global_emb = pert_global_emb.index_add(0, selected, correction)
 
             ## add global perturbation embedding to each gene in each cell in the batch
             base_emb = base_emb.reshape(num_graphs, self.num_genes, -1)

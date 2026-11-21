@@ -97,6 +97,9 @@ def git_commit():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_id", help="run_id from configs/norman_runs.csv")
+    parser.add_argument("--protocol", type=Path, default=PROTOCOL,
+                        help="Training JSON; use configs/norman_depmap_training.json for the DepMap comparison")
+    parser.add_argument("--depmap-features", type=Path, help="Prepared DepMap NPZ for enabled models")
     parser.add_argument("--data-path", type=Path, required=True, help="GEARS data directory (downloads and caches)")
     parser.add_argument("--output-root", type=Path, required=True, help="Directory that planned output paths are relative to")
     parser.add_argument("--device", default="cuda")
@@ -106,11 +109,22 @@ def main():
     output_root = args.output_root.resolve()
     require(not output_root.is_relative_to(REPOSITORY), "Outputs must be outside the source checkout")
     require(not args.data_path.resolve().is_relative_to(REPOSITORY), "Data must be outside the source checkout")
-    protocol = json.loads(PROTOCOL.read_text())
+    protocol_path = args.protocol.resolve()
+    protocol = json.loads(protocol_path.read_text())
     split_dir = REPOSITORY / protocol["split_dir"]
     run_plan = REPOSITORY / protocol["run_plan"]
     run = planned_run(run_plan, args.run_id)
     check_protocol(protocol, split_dir, run)
+    model_settings = protocol['models'][run['model']]
+    use_depmap = model_settings.get('use_depmap', False)
+    require(not use_depmap or args.depmap_features is not None,
+            'This model requires --depmap-features with a prepared DepMap NPZ')
+    depmap_hash = None
+    if use_depmap:
+        # Fail before downloading expression data if the prior is malformed.
+        from gears.depmap import load_features
+        load_features(args.depmap_features)
+        depmap_hash = file_sha256(args.depmap_features)
     split_seed = int(run["split_seed"])
     run_dir = (output_root / run["result_path"]).parent
     require(not run_dir.exists(), f"Run directory already exists: {run_dir}")
@@ -126,7 +140,9 @@ def main():
     model = GEARS(pert_data, device=args.device)
     graph_hyper = {k: v for k, v in protocol["graphs"].items() if k != "default_pert_graph"}
     model.model_initialize(**protocol["model"], **graph_hyper,
-                           pert_agg=protocol["models"][run["model"]]["pert_agg"],
+                           pert_agg=model_settings['pert_agg'],
+                           use_depmap=use_depmap,
+                           depmap_path=args.depmap_features if use_depmap else None,
                            seed=protocol["training_seed"],
                            G_coexpress=graphs["coexpress"]["edge_index"],
                            G_coexpress_weight=graphs["coexpress"]["edge_weight"],
@@ -143,14 +159,19 @@ def main():
     results = {"run_id": args.run_id, "model": run["model"], "split_seed": split_seed,
                "training_seed": protocol["training_seed"], "git_commit": git_commit(),
                "pert_agg": model.config["pert_agg"],
+               "use_depmap": use_depmap, "depmap_bundle_sha256": depmap_hash,
                "coexpression_batching": model.config["coexpression_batching"],
                "run_plan_sha256": file_sha256(run_plan),
-               "protocol_sha256": file_sha256(PROTOCOL), "split_bundle_sha256": protocol["split_bundle_sha256"],
+               "protocol_sha256": file_sha256(protocol_path), "split_bundle_sha256": protocol["split_bundle_sha256"],
                "graph_sha256": {name: graphs[name]["sha256"] for name in ("coexpress", "go")},
                "coexpression_fit_cells": graphs["fit_cells"],
                "selection_metric": protocol["checkpoint_selection"]["metric"], "best_epoch": model.best_epoch,
                "selected_validation": selected, "validation_history": model.val_history,
                "test_evaluated": args.test, "checkpoint_files": ["config.pkl", "model.pt"]}
+    if use_depmap:
+        metadata = model.config['depmap_metadata']
+        results['depmap'] = {k: metadata[k] for k in
+                            ('feature_dim', 'matched_genes', 'missing_genes', 'aligned_sha256', 'source')}
     (run_dir / "results.json").write_text(json.dumps(results, indent=2) + "\n")
     print(json.dumps({k: results[k] for k in ("run_id", "best_epoch", "selected_validation")}, indent=2))
 

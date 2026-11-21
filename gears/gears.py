@@ -8,6 +8,7 @@ import torch.nn as nn
 from torch.optim.lr_scheduler import StepLR
 
 from .model import GEARS_Model
+from .depmap import AlignedDepMap, align_features, load_features
 from .inference import evaluate, compute_metrics, deeper_analysis, \
                   non_dropout_analysis, normalized_mse_de
 from .utils import loss_fct, uncertainty_loss_fct, parse_any_pert, \
@@ -119,7 +120,8 @@ class GEARS:
                 'direction_lambda': 'regularization term to balance direction loss and prediction loss, default 1',
                 'pert_agg': "'sum', 'set_transformer', or 'residual_set_transformer'; default 'sum'",
                 'seed': 'seed for model initialization and training batch order, default None',
-                'coexpression_batching': "'shared' for corrected batching or 'legacy' for historical checkpoints"
+                'coexpression_batching': "'shared' for corrected batching or 'legacy' for historical checkpoints",
+                'use_depmap': 'optional fixed DepMap priors with a learned residual, default False'
                }
     
     def model_initialize(self, hidden_size = 64,
@@ -140,6 +142,9 @@ class GEARS:
                          pert_agg = 'sum',
                          seed = None,
                          coexpression_batching = 'shared',
+                         use_depmap = False,
+                         depmap_path = None,
+                         depmap_data = None,
                          **kwargs
                         ):
         """
@@ -188,12 +193,35 @@ class GEARS:
         coexpression_batching: str
             'shared' convolves one gene graph and repeats its embeddings across
             cells. 'legacy' reproduces the historical first-cell-only edges.
+        use_depmap: bool
+            Add fixed DepMap priors through a trainable residual projection.
+            Default False; independent of pert_agg.
+        depmap_path: str or Path
+            Prepared DepMap NPZ bundle. Only read when use_depmap=True.
+        depmap_data: AlignedDepMap
+            Validated in-memory alternative to depmap_path, also used for
+            self-contained checkpoint restoration.
 
         Returns
         -------
         None
         """
         
+        if not isinstance(use_depmap, bool):
+            raise ValueError('use_depmap must be a boolean')
+        aligned = None
+        if use_depmap:
+            if (depmap_path is None) == (depmap_data is None):
+                raise ValueError('Enabled DepMap requires exactly one of depmap_path or depmap_data')
+            aligned = (align_features(load_features(depmap_path), self.pert_list)
+                       if depmap_path is not None else depmap_data)
+            if not isinstance(aligned, AlignedDepMap):
+                raise ValueError('depmap_data must be an AlignedDepMap object')
+            aligned.validate(self.pert_list)
+            if ('expression_genes' in aligned.metadata
+                    and aligned.metadata['expression_genes'] != self.gene_list):
+                raise ValueError('DepMap checkpoint expression-gene order differs from the model')
+
         self.config = {'hidden_size': hidden_size,
                        'num_go_gnn_layers' : num_go_gnn_layers, 
                        'num_gene_gnn_layers' : num_gene_gnn_layers,
@@ -214,8 +242,12 @@ class GEARS:
                        'no_perturb': no_perturb,
                        'pert_agg': pert_agg,
                        'seed': seed,
-                       'coexpression_batching': coexpression_batching
+                       'coexpression_batching': coexpression_batching,
+                       'use_depmap': use_depmap
                       }
+        if aligned is not None:
+            self.config['depmap_metadata'] = deepcopy(aligned.metadata)
+            self.config['depmap_metadata']['expression_genes'] = list(self.gene_list)
         
         if self.wandb:
             self.wandb.config.update(self.config)
@@ -256,8 +288,13 @@ class GEARS:
             
         if seed is not None:
             set_seed(seed)
-        self.model = GEARS_Model(self.config).to(self.device)
+        model_args = dict(self.config)
+        if aligned is not None:
+            model_args.update(depmap_features=aligned.values, depmap_mask=aligned.mask)
+        self.model = GEARS_Model(model_args).to(self.device)
         self.best_model = deepcopy(self.model)
+        self.saved_pred = {}
+        self.saved_logvar_sum = {}
         
     def load_pretrained(self, path):
         """
@@ -279,7 +316,6 @@ class GEARS:
         for key in ('device', 'num_genes', 'num_perts'):
             config.pop(key, None)
         config.setdefault('coexpression_batching', 'legacy')
-        self.model_initialize(**config)
         
         state_dict = torch.load(os.path.join(path, 'model.pt'), map_location = torch.device('cpu'))
         if next(iter(state_dict))[:7] == 'module.':
@@ -290,6 +326,17 @@ class GEARS:
                 name = k[7:] # remove `module.`
                 new_state_dict[name] = v
             state_dict = new_state_dict
+
+        metadata = config.pop('depmap_metadata', None)
+        if config.get('use_depmap', False):
+            if not isinstance(metadata, dict) or not {'depmap_features', 'depmap_mask'} <= state_dict.keys():
+                raise ValueError('DepMap checkpoint lacks saved features, mask or metadata')
+            if metadata.get('expression_genes') != self.gene_list:
+                raise ValueError('DepMap checkpoint expression-gene order differs from the model')
+            config['depmap_data'] = AlignedDepMap(
+                state_dict['depmap_features'].cpu().numpy(),
+                state_dict['depmap_mask'].cpu().numpy(), metadata)
+        self.model_initialize(**config)
         
         self.model.load_state_dict(state_dict)
         self.model = self.model.to(self.device)
@@ -314,6 +361,11 @@ class GEARS:
         
         if self.config is None:
             raise ValueError('No model is initialized...')
+
+        if self.config.get('use_depmap', False):
+            AlignedDepMap(self.best_model.depmap_features.detach().cpu().numpy(),
+                          self.best_model.depmap_mask.detach().cpu().numpy(),
+                          self.config['depmap_metadata']).validate(self.pert_list)
         
         with open(os.path.join(path, 'config.pkl'), 'wb') as f:
             pickle.dump(self.config, f)

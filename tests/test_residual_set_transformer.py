@@ -80,7 +80,7 @@ def test_active_residual_respects_set_order_padding_and_controls():
 @pytest.mark.parametrize('aggregation', ['sum', 'set_transformer'])
 def test_existing_variants_match_batch_fix_commit(tmp_path, aggregation):
     # Protect both existing modes when factoring out the shared attention code.
-    source = subprocess.run(['git', 'show', 'c154fa1:gears/model.py'], cwd=REPO_ROOT,
+    source = subprocess.run(['git', 'show', '8edf2ff:gears/model.py'], cwd=REPO_ROOT,
                             check=True, capture_output=True, text=True).stdout
     reference_path = tmp_path / 'reference.py'
     reference_path.write_text(source)

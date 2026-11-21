@@ -124,8 +124,9 @@ python "$repo_dir/scripts/norman_train.py" gears_split1_train101 \
 
 Corrected runs use shared coexpression propagation and separate output paths;
 see [model variants](model-variants.md) for checkpoint compatibility and tests.
-The frozen historical run plan is not modified. TODO: settle final test scoring
-definitions and add the DepMap variants.
+The frozen historical run plan is not modified. Optional DepMap comparisons use
+a [separate run configuration](depmap.md#six-mode-norman-comparison).
+TODO: settle final test scoring definitions for the full comparison.
 
 Fit any new preprocessing/graphs/loss masks on permitted training observations.
 Keep held-out outcomes and their rankings out of model inputs and tuning. The

@@ -4,7 +4,8 @@
 - `gears/` contains the GEARS model, data interface, training, and evaluation code.
 - Aggregation is selected with `pert_agg`: `"sum"`, `"set_transformer"`
   (replacement), or `"residual_set_transformer"` (original fusion plus a
-  zero-initialized attention correction). DepMap integration remains pending.
+  zero-initialized attention correction). Optional `use_depmap` adds fixed
+  dependency priors before any aggregation; default is false.
 - `splits/norman/` is the frozen shared condition-split protocol for all models.
 - New models use corrected shared coexpression batching. Historical checkpoints
   without a batching setting load in legacy mode; never silently reinterpret them.
@@ -24,6 +25,8 @@
 ## Commands and documentation map
 - [Model variants](docs/model-variants.md): batching semantics, checkpoint
   compatibility, experiment configuration and synthetic regression checks.
+- [DepMap](docs/depmap.md): feature preparation/alignment, residuals, portable
+  checkpoints, six-mode run configuration, and verification.
 - [Norman splits](docs/norman-splits.md): split rules, provenance, file map,
   GEARS integration limits, and portable verify/generate/test commands.
 - `scripts/norman_splits.py verify` audits hashes and reconstructs assignments.
@@ -37,4 +40,4 @@
 - `PYTHONPATH=/absolute/repository python -m pytest /absolute/repository/tests`
   runs the training-protocol and model checks on synthetic data.
 - [README](README.md): upstream GEARS installation and examples.
-- Final test scoring and DepMap variants remain TODO.
+- Full DepMap benchmark training and cross-cell-line conditioning remain TODO.
