@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "name": "replogle_paired_singlecell_v1",
+  "split_seeds": [1, 2, 3, 4, 5],
+  "validation_fraction": 0.15,
+  "test_fraction": 0.15,
+  "control_seed": 1000,
+  "training_seed": 101,
+  "low_cell_count_flag": 30,
+  "protocols": ["joint_unseen", "k562_to_rpe1", "rpe1_to_k562"],
+  "source_sha256": {
+    "k562": "550fde89ac85c258c9fd517638fe34fb42c0e748c9305fe6355761a2bb754170",
+    "rpe1": "cc3e13da13ecd3cf7fb027b8261514a2bdcfab16fe47fc685b2714f79781afba"
+  },
+  "source_urls": {
+    "k562": "https://dataverse.harvard.edu/api/access/datafile/7458695",
+    "rpe1": "https://dataverse.harvard.edu/api/access/datafile/7458694"
+  }
+}

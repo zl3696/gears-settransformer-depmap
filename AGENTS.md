@@ -3,11 +3,15 @@
 ## Overview
 - `gears/` contains the GEARS model, data interface, training, and evaluation code.
 - The Set Transformer aggregation is enabled with `pert_agg="set_transformer"`;
-  the default `"sum"` path is retained. DepMap integration remains pending.
+  the default `"sum"` path is retained. A separate Replogle model provides pooled
+  A/B/C label/DepMap training without changing historical checkpoint behavior.
 - `splits/norman/` is the frozen shared condition-split protocol for all models.
+- Paired Replogle single-cell preparation is independent of Norman: one shared
+  expression panel, five gene splits, and separate joint/transfer dataset views.
 - Additive and fitted linear baselines have five validation/test panels. Published
   historical and new corrected-batching GEARS/replacement/residual Set Transformer
-  checkpoints have matched five-split final-test results. DepMap remains pending.
+  checkpoints have matched five-split final-test results. Norman DepMap comparisons
+  remain pending.
 
 ## Development rules
 - Preserve existing model behavior unless a requested change requires otherwise.
@@ -26,6 +30,12 @@
   notebooks or assignment files without explicit authorization.
 
 ## Commands and documentation map
+- [Paired Replogle data](docs/replogle-data.md): source pins, train/validation/test
+  views, both transfer directions, controls, balancing, exports and integrity checks.
+- `scripts/replogle_data.py {prepare,verify,export}` uses explicit external data paths.
+- [Replogle training](docs/replogle-training.md): `scripts/replogle_train.py {train,plan}`
+  launches main or either transfer task with A/B/C, training-only graphs,
+  validation checkpoint selection, and portable saved models. No test scorer.
 - [Norman splits](docs/norman-splits.md): split rules, provenance, file map,
   GEARS integration limits, and portable verify/generate/test commands.
 - `scripts/norman_splits.py verify` audits hashes and reconstructs assignments.
