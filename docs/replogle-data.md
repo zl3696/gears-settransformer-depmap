@@ -98,7 +98,8 @@ record must not be used for training.
 The original single-line GEARS loader does not consume this format. Use the
 separate [Replogle training entry](replogle-training.md) for context-aware A/B/C,
 training-only graphs/masks, validation-only checkpoint selection, and fixed
-DepMap projection. Final-test prediction scoring remains separate work. The
+DepMap projection. The separate [evaluation workflow](replogle-evaluation.md)
+provides inference-only prediction/scoring and the transfer Copy-effect baseline. The
 historical Norman manifests and numerical sources are unchanged.
 
 ## Commands from any directory

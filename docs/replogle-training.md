@@ -7,6 +7,8 @@ and split. It consumes the immutable [single-cell bundle](replogle-data.md),
 including its control assignments and sampling weights. It does not score the
 final test set. Historical `GEARS`, `PertData`, and Norman checkpoint paths are
 unchanged; this is a separate consumer with corrected shared-graph batching.
+The independent [evaluation workflow](replogle-evaluation.md) scores saved models
+and the transfer Copy-effect baseline without altering this trainer.
 
 | CLI task | Training targets | Validation targets | Test targets, reserved |
 |---|---|---|---|

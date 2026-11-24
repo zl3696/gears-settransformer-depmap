@@ -35,7 +35,11 @@
 - `scripts/replogle_data.py {prepare,verify,export}` uses explicit external data paths.
 - [Replogle training](docs/replogle-training.md): `scripts/replogle_train.py {train,plan}`
   launches main or either transfer task with A/B/C, training-only graphs,
-  validation checkpoint selection, and portable saved models. No test scorer.
+  validation checkpoint selection, and portable saved models.
+- [Replogle evaluation](docs/replogle-evaluation.md):
+  `scripts/replogle_test.py {plan,run,verify,regenerate,summary}` evaluates frozen
+  A/B/C checkpoints and transfer Copy-effect, with validation-first testing,
+  explicit control-offset correction and matched response/similarity outputs.
 - [Norman splits](docs/norman-splits.md): split rules, provenance, file map,
   GEARS integration limits, and portable verify/generate/test commands.
 - `scripts/norman_splits.py verify` audits hashes and reconstructs assignments.

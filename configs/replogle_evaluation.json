@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "name": "replogle_evaluation_v1",
+  "split_seeds": [1, 2, 3, 4, 5],
+  "training_seed": 101,
+  "de_genes": 20,
+  "batch_size": 128,
+  "device": "cpu",
+  "threads": 4,
+  "response_centering": "prediction_minus_assigned_input_mean; truth_minus_training_control_mean",
+  "copy_effect_centering": "prediction_minus_destination_training_control_mean",
+  "expression_metrics": ["mse", "mse_de", "pearson", "pearson_de"],
+  "expression_undefined_pearson": "zero_with_flag",
+  "response_undefined_pearson": "null_with_valid_count; paired_comparisons_use_common_valid_targets",
+  "cross_line_genes": "all_shared_expression_genes",
+  "batch_audit_rtol": 0.00001,
+  "batch_audit_atol": 0.00001,
+  "regeneration_rtol": 0.000001,
+  "regeneration_atol": 0.0000001
+}
