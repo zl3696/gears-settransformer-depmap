@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "training_seed": 101,
-  "epochs": 20,
+  "epochs": 10,
   "batch_size": 32,
   "validation_batch_size": 128,
   "learning_rate": 0.001,

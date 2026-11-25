@@ -94,9 +94,12 @@ reference-cell identities remain unverified; see the prepared prior provenance.
   occurs. Upstream HVG selection, earlier PCA exposure, and unverified upstream
   normalization remain recorded limitations of the prepared data.
 
-`configs/replogle_training.json` fixes 20 epochs, batch size 32, hidden size 64,
+`configs/replogle_training.json` fixes 10 epochs, batch size 32, hidden size 64,
 Adam lr=0.001, weight decay=0.0005, per-epoch LR multiplier 0.5, direction weight
-0.1, gradient-value clipping at 1, and validation batch size 128. Change a copied
+0.1, gradient-value clipping at 1, and validation batch size 128. The team cut
+the budget from 20 to 10 epochs before any formal run: with the per-epoch 0.5
+multiplier the learning rate is below 2e-6 after epoch 10, so later epochs
+barely change the model while doubling Replogle training time. Change a copied
 configuration before formal runs and use a new output root; do not adapt it to
 test results. No full Replogle fit or final-test evaluation has been completed.
 
