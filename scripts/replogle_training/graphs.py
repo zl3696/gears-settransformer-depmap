@@ -8,6 +8,8 @@ from scipy.sparse import csr_matrix
 
 from replogle_data.io import digest, require
 
+COEXPRESSION_METHOD = 'mean_absolute_within_line_pearson_v1'
+
 
 def top_edges(scores, k, threshold):
     """Directed top-k edges into each query gene, ties resolved by gene index."""
@@ -43,11 +45,15 @@ def go_graph(genes, annotations, k, threshold):
 
 
 def moments(bundle, part, cross_product=False):
+    """Condition moments and, optionally, centered cross-products per cell line."""
     n_genes = len(bundle.genes)
     sums = np.zeros((bundle.n_groups, n_genes), dtype=np.float64)
     squares = np.zeros_like(sums)
     counts = np.zeros(bundle.n_groups, dtype=np.int64)
-    cross = np.zeros((n_genes, n_genes), dtype=np.float64) if cross_product else None
+    n_lines = len(bundle.contract['context_names'])
+    cross = np.zeros((n_lines, n_genes, n_genes), dtype=np.float64) if cross_product else None
+    line_means = np.zeros((n_lines, n_genes), dtype=np.float64)
+    line_counts = np.zeros(n_lines, dtype=np.int64)
     rows = bundle.views[part]['rows']
     groups = bundle.groups(part)
     for start in range(0, len(rows), 512):
@@ -57,7 +63,19 @@ def moments(bundle, part, cross_product=False):
         np.add.at(squares, group, x * x)
         counts += np.bincount(group, minlength=bundle.n_groups)
         if cross is not None:
-            cross += x.T @ x
+            contexts = bundle.views[part]['cell_line_ids'][start:start + len(x)]
+            for line in np.unique(contexts):
+                values = x[contexts == line]
+                block_mean = values.mean(axis=0)
+                centered = values - block_mean
+                previous = line_counts[line]
+                total = previous + len(values)
+                delta = block_mean - line_means[line]
+                # Merge centered blocks to avoid subtracting large raw moments.
+                cross[line] += centered.T @ centered
+                cross[line] += np.outer(delta, delta) * (previous * len(values) / total)
+                line_means[line] += delta * (len(values) / total)
+                line_counts[line] = total
     return sums, squares, counts, cross
 
 
@@ -68,15 +86,18 @@ def build_arrays(bundle, config, gene2go_path):
         annotations = pickle.load(stream)
     print('Building fixed-prior GO graph', flush=True)
     go_edges, go_weights = go_graph(bundle.perturbations, annotations, config['go_k'] + 1, config['go_threshold'])
-    print('Fitting coexpression graph and loss masks using training cells only', flush=True)
+    print('Fitting equal-line mean absolute Pearson graph and loss masks using training cells only', flush=True)
     train_sum, train_sq, train_n, cross = moments(bundle, 'train', cross_product=True)
-    total = train_sum.sum(axis=0)
-    covariance = cross - np.outer(total, total) / train_n.sum()
-    scale = np.sqrt(np.maximum(np.diag(covariance), 0))
-    denominator = np.outer(scale, scale)
-    correlation = np.divide(covariance, denominator, out=np.zeros_like(covariance), where=denominator > 0)
-    # Original GEARS constructs coexpression edges using absolute correlations.
-    edges, weights = top_edges(np.abs(np.clip(correlation, -1, 1)), config['coexpression_k'] + 1, config['coexpression_threshold'])
+    require(np.all(train_n.reshape(len(cross), -1).sum(axis=1) >= 2),
+            'Each line requires at least two observed training cells')
+    scores = np.zeros_like(cross[0])
+    for covariance in cross:
+        scale = np.sqrt(np.maximum(np.diag(covariance), 0))
+        denominator = np.outer(scale, scale)
+        correlation = np.divide(covariance, denominator, out=np.zeros_like(covariance), where=denominator > 0)
+        # Preserve GEARS's unsigned edges: take absolute values before averaging.
+        scores += np.abs(np.clip(correlation, -1, 1)) / len(cross)
+    edges, weights = top_edges(scores, config['coexpression_k'] + 1, config['coexpression_threshold'])
     control_groups = np.asarray([0, bundle.target_count + 1])
     require(np.all(train_n[control_groups] >= 2), 'Each line requires at least two observed training controls')
     controls = train_sum[control_groups] / train_n[control_groups, None]

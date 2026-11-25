@@ -2,6 +2,8 @@
 
 ## Overview
 - `gears/` contains the GEARS model, data interface, training, and evaluation code.
+- Run Replogle A/B/C from one checkout through `scripts/replogle_train.py`;
+  `--variant` selects the model while graph preprocessing stays shared.
 - The Set Transformer aggregation is enabled with `pert_agg="set_transformer"`;
   the default `"sum"` path is retained. A separate Replogle model provides pooled
   A/B/C label/DepMap training without changing historical checkpoint behavior.

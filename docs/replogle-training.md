@@ -20,6 +20,10 @@ All controls are training observations. Both contexts occur in every training
 task; transfer holds out a known target's response in the destination context.
 Five split seeds and three variants yield 45 separate models, each with training
 seed 101. Never use transfer outcomes to adapt a main-run model or its settings.
+Run A/B/C as separate models from this same checkout and entry point, selecting
+`--variant A`, `B`, or `C`. All three automatically use the within-line shared
+graph below; no graph opt-in flag or branch switch is required. Historical GEARS
+and older feature-branch entry points do not select these Replogle variants.
 
 ## Variants and model behavior
 
@@ -38,7 +42,8 @@ decoding. C adds a projected fixed profile to the selected target embedding
 after GO propagation and before fusion. Missing profiles give zero correction,
 including projection bias; no target is removed. Controls receive neither
 correction. A does not receive an explicit context feature; labels still govern
-control matching, condition grouping, loss references, and reporting for all models.
+shared graph estimation, control matching, condition grouping, loss references,
+and reporting for all models.
 
 Both additions start at zero and preserve the base initialization/RNG sequence,
 so A/B/C start with identical predictions. Fixed graphs and C's profiles/mask
@@ -55,10 +60,20 @@ reference-cell identities remain unverified; see the prepared prior provenance.
   it does not decode test expression. `--preload` caches only permitted rows as
   sparse CSR in RAM; otherwise expression is read on demand.
 - `graphs.py` constructs a GO Jaccard graph from trusted, SHA-pinned
-  `gene2go_all.pkl`. The coexpression graph uses absolute Pearson correlations
-  over this task/split's training cells only. Original GEARS conventions retain
-  up to `k + 1` edges above threshold, with deterministic gene-index ties.
-  Defaults are k=20, GO threshold=0.1 and coexpression threshold=0.4.
+  `gene2go_all.pkl`. For coexpression, calculate Pearson correlations separately
+  within K562 and RPE1 using only this task/split's training cells, including
+  controls. Average their absolute values with equal line weights:
+  `score(g,h) = (abs(r_K562) + abs(r_RPE1)) / 2`. Within-line Pearson removes
+  gene mean offsets; streamed centered cross-products avoid cancellation from
+  large offsets. A zero-variance gene contributes zero correlation in that line,
+  without reallocating its half weight. Both lines require at least two cells.
+  Cells within each line retain equal weight; optimizer sampling weights do not
+  reweight these correlations. Apply threshold/top-k selection only after the
+  average, retaining the original `k + 1` convention and gene-index tie breaks.
+  Defaults remain k=20, GO threshold=0.1 and coexpression threshold=0.4. The
+  resulting single unsigned graph is identical across A/B/C for a task/split;
+  it is not selected by cell line during prediction. Opposite-sign relationships
+  do not cancel, and a retained edge need not be strong in both lines.
 - Training-only nonzero-expression masks and per-line control means define the
   original fourth-power/direction loss, applied to individual observed cells.
   Each `(cell line, target)` is a separate condition, including controls. Loss
@@ -99,13 +114,13 @@ common=(--data-dir "$runtime_dir/outputs/replogle-paired-singlecell-v1"
         --output-root "$runtime_dir/outputs/replogle-training-v1"
         --gene2go "$runtime_dir/tmp/morph-gears-review/gene2go_all.pkl")
 
-# Each command launches exactly one model. Choose A, B, or C as needed.
+# Three independent models with the same task, split, code and graph builder.
 "$python_bin" "$repo_dir/scripts/replogle_train.py" train "${common[@]}" \
   --task main --variant A --split-seed 1
 "$python_bin" "$repo_dir/scripts/replogle_train.py" train "${common[@]}" \
-  --task k562_to_rpe1 --variant B --split-seed 1
+  --task main --variant B --split-seed 1
 "$python_bin" "$repo_dir/scripts/replogle_train.py" train "${common[@]}" \
-  --task rpe1_to_k562 --variant C --split-seed 1 \
+  --task main --variant C --split-seed 1 \
   --depmap-features "$runtime_dir/outputs/replogle-depmap-v1/morph_depmap.npz"
 
 # Print all 45 commands; printing does not create or run models.
@@ -115,8 +130,10 @@ common=(--data-dir "$runtime_dir/outputs/replogle-paired-singlecell-v1"
 
 Add `--execute` to `plan` to run sequentially. Narrow it with `--tasks main`,
 `--variants A B`, or `--split-seeds 1`. A/B never load DepMap even if the argument
-is supplied. `--device auto` chooses CUDA, then MPS, then CPU; an explicit
-`--device cpu` is useful for reproducibility. `--preload` trades RAM for faster
+is supplied. For either transfer comparison, replace `--task main` with the same
+transfer task in all three commands. `--device auto` chooses CUDA, then MPS,
+then CPU; an explicit `--device cpu` is useful for reproducibility.
+`--preload` trades RAM for faster
 random-row input access; the complete expression matrix is never densified.
 
 ## Runtime artifacts and verification
@@ -125,12 +142,18 @@ Outputs must be outside the checkout and frozen bundle:
 
 - `preprocessing/<content-key>/`: graph/mask/control and validation-scoring
   arrays, input contract, and hashes. A/B/C share this cache for a task/split;
-  different protocols/splits have separate keys. A live builder lock fails
+  different protocols/splits have separate keys. The key includes the graph
+  implementation hash and `coexpression_method`, so earlier pooled-correlation
+  caches cannot be reused by this builder. A live builder lock fails
   clearly; start parallel variants after the common cache has been built.
 - `runs/<protocol>_<variant>_split<n>_train101/`: `run.json` records configuration,
   data/code hashes, Git commit, environment, and state; `history.json` records
   epoch loss/validation metrics; `results.json` records selected validation and
   checkpoint hash. Errors leave `failure.json`.
+- Training prints `coexpression_method=mean_absolute_within_line_pearson_v1`
+  and `shared_graph_cache=<key>` for each variant. Both run/result metadata
+  record these as `preprocessing.coexpression_method` and `preprocessing.key`;
+  the keys must match across A/B/C with the same task, split, inputs and settings.
 - `best.pt` and `last.pt`, each with a SHA sidecar: ordered expression/GO axes,
   context names, model configuration/state, graphs, per-line control means and
   C's fixed features/mask/metadata. Reload checks hashes, gene order, contract,
@@ -140,14 +163,20 @@ Best-checkpoint validation is repeated after reload and must match. Existing
 run directories are refused rather than overwritten; optimizer resume is not
 implemented. Start a deliberate rerun in a new output root. Frozen
 `planned_runs.csv` remains immutable; actual status belongs in runtime run files.
+Older checkpoints retain their saved graphs; revised graph construction requires
+fresh training rather than replacing graph buffers in an existing checkpoint.
+Evaluating an older Replogle run requires its matching training-source version;
+the evaluator intentionally rejects changed training-source hashes before loading.
 
 ```bash
 "$python_bin" -m unittest discover -s "$repo_dir/tests" -p 'test_replogle*.py' -v
 ```
 
-The 13 data/training regression tests include two epochs for all nine task/variant
+The data/training regression tests include two epochs for all nine task/variant
 combinations, real CLI dispatch, base-model equivalence, initial prediction/RNG
 matching, context conditioning, missing-prior masking, training-only graph fitting,
-test-read guards, equal-line validation, cache corruption, and self-contained
-checkpoint restoration. They use tiny fixtures, not the final benchmark data.
+test-read guards, equal-line validation, cache invalidation/corruption, and
+self-contained checkpoint restoration. Graph checks cover mean offsets,
+opposite signs, unequal line sizes, constant genes, streamed moments and
+selection after averaging. They use tiny fixtures, not the final benchmark data.
 On this Mac, CLI subprocess tests require normal OpenMP shared-memory access.

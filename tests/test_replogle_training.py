@@ -10,8 +10,10 @@ import sys
 import tempfile
 import unittest
 from types import SimpleNamespace
+from unittest import mock
 
 import numpy as np
+from scipy.sparse import csr_matrix
 import torch
 
 REPO = Path(__file__).resolve().parents[1]
@@ -27,6 +29,74 @@ from replogle_training.dataset import Bundle
 from replogle_training.engine import loss, run, validation
 from replogle_training.graphs import build_arrays
 import test_replogle_data as data_tests
+
+
+class GraphTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.annotation = Path(self.temporary.name) / 'annotations.pkl'
+        self.annotation.write_bytes(pickle.dumps({'T0': {'term'}}))
+        self.config = dict(gene2go_sha256=digest(self.annotation), go_k=1, go_threshold=.1,
+                           coexpression_k=4, coexpression_threshold=.4, de_genes=2)
+
+    def tearDown(self):
+        self.temporary.cleanup()
+
+    def bundle(self, repetitions=(1, 5), shifts=None, shuffle=False):
+        u, v = np.array([-1., -1., 1., 1.]), np.array([-1., 1., -1., 1.])
+        first = np.column_stack((u + 10, u + 20, v + 30, np.full(4, 7.)))
+        second = np.column_stack((u + 100, -u + 200, v + 300, u + 40))
+        values = np.vstack([np.tile(block, (repeat, 1))
+                            for block, repeat in zip((first, second), repetitions)])
+        contexts = np.repeat([0, 1], 4 * np.asarray(repetitions))
+        if shifts is not None:
+            values += np.asarray(shifts)[contexts]
+        if shuffle:
+            order = np.random.default_rng(101).permutation(len(values))
+            values, contexts = values[order], contexts[order]
+        matrix = np.vstack((values, np.full((2, 4), 1e6)))
+        views = dict(train=dict(rows=np.arange(len(values)), cell_line_ids=contexts, groups=2 * contexts),
+                     val=dict(rows=np.arange(len(values), len(matrix)), cell_line_ids=np.array([0, 1]),
+                              groups=np.array([1, 3])))
+        return SimpleNamespace(genes=['G0', 'G1', 'G2', 'G3'], perturbations=['T0'],
+                               target_count=1, n_groups=4, contract=dict(context_names=['K562', 'RPE1']),
+                               views=views, groups=lambda part: views[part]['groups'],
+                               expression=SimpleNamespace(read=lambda rows: csr_matrix(matrix[rows])))
+
+    def build(self, bundle, **settings):
+        with contextlib.redirect_stdout(io.StringIO()):
+            return build_arrays(bundle, dict(self.config, **settings), self.annotation)
+
+    def test_within_line_correlations_remove_offsets_and_preserve_opposite_signs(self):
+        # G0/G1 have correlations +1/-1; G0/G2 are independent within both lines.
+        # G3 is constant only in K562, so its RPE1 correlations contribute half.
+        arrays = self.build(self.bundle())
+        np.testing.assert_array_equal(arrays['coexpression_edges'],
+                                      [[0, 1, 3, 0, 1, 3, 2, 0, 1, 3],
+                                       [0, 0, 0, 1, 1, 1, 2, 3, 3, 3]])
+        np.testing.assert_allclose(arrays['coexpression_weights'],
+                                   [1, 1, .5, 1, 1, .5, 1, .5, .5, .5], atol=1e-7)
+
+    def test_unequal_line_counts_offsets_and_streaming_do_not_change_scores(self):
+        expected = self.build(self.bundle())
+        actual = self.build(self.bundle(repetitions=(200, 400), shuffle=True,
+                                       shifts=[[1e8, 2e8, 3e8, 4e8], [8e8, 4e8, 6e8, 2e8]]))
+        # Numerical ties can change edge ordering after very large mean shifts.
+        order = lambda arrays: np.lexsort(arrays['coexpression_edges'])
+        actual_order, expected_order = order(actual), order(expected)
+        np.testing.assert_array_equal(actual['coexpression_edges'][:, actual_order],
+                                      expected['coexpression_edges'][:, expected_order])
+        np.testing.assert_allclose(actual['coexpression_weights'][actual_order],
+                                   expected['coexpression_weights'][expected_order], atol=1e-6)
+
+    def test_threshold_and_top_k_are_applied_after_equal_line_average(self):
+        thresholded = self.build(self.bundle(), coexpression_threshold=.6)
+        np.testing.assert_array_equal(thresholded['coexpression_edges'], [[0, 1, 0, 1, 2], [0, 0, 1, 1, 2]])
+        np.testing.assert_array_equal(thresholded['coexpression_weights'], np.ones(5))
+        limited = self.build(self.bundle(), coexpression_k=1)
+        np.testing.assert_array_equal(limited['coexpression_edges'],
+                                      [[0, 1, 0, 1, 2, 0, 1], [0, 0, 1, 1, 2, 3, 3]])
+        np.testing.assert_allclose(limited['coexpression_weights'], [1, 1, 1, 1, 1, .5, .5])
 
 
 class ModelTests(unittest.TestCase):
@@ -139,6 +209,7 @@ class TrainingTests(unittest.TestCase):
     def test_all_nine_task_variant_paths_and_self_contained_checkpoints(self):
         output = self.root / 'runtime'
         cache_keys = {}
+        shared_graphs = {}
         for task in ('main', 'k562_to_rpe1', 'rpe1_to_k562'):
             for variant in ('A', 'B', 'C'):
                 with self.subTest(task=task, variant=variant), contextlib.redirect_stdout(io.StringIO()):
@@ -150,6 +221,10 @@ class TrainingTests(unittest.TestCase):
                     cache_keys.setdefault(task, set()).add(result['preprocessing']['key'])
                     checkpoint = output / 'runs' / result['run_id'] / 'best.pt'
                     model, payload = load_checkpoint(checkpoint)
+                    graph = (model.G_coexpress, model.G_coexpress_weight)
+                    shared_graphs.setdefault(task, graph)
+                    for expected, actual in zip(shared_graphs[task], graph):
+                        torch.testing.assert_close(expected, actual, atol=0, rtol=0)
                     if variant in ('B', 'C'):
                         self.assertGreater(float(model.context_embedding.weight.abs().sum()), 0)
                     if variant == 'C':
@@ -175,7 +250,10 @@ class TrainingTests(unittest.TestCase):
                 arrays = build_arrays(bundle, self.config, self.annotation)
             rows = bundle.views['train']['rows']
             x = bundle.expression.read(rows).toarray()
-            corr = np.abs(np.nan_to_num(np.corrcoef(x.T)))
+            contexts = bundle.views['train']['cell_line_ids']
+            with np.errstate(invalid='ignore', divide='ignore'):
+                corr = np.mean([np.abs(np.nan_to_num(np.corrcoef(x[contexts == line].T)))
+                                for line in range(2)], axis=0)
             for (source, target), weight in zip(arrays['coexpression_edges'].T, arrays['coexpression_weights']):
                 self.assertAlmostEqual(float(weight), float(corr[source, target]), places=6)
             self.assertTrue(np.all(arrays['training_counts'][np.unique(bundle.groups('val'))] == 0))
@@ -185,6 +263,23 @@ class TrainingTests(unittest.TestCase):
             first = bundle.expression.read(rows[:3]).toarray()
             bundle.expression.preload()
             np.testing.assert_array_equal(bundle.expression.read(rows[:3]).toarray(), first)
+        finally:
+            bundle.close()
+
+    def test_graph_implementation_change_gets_a_new_cache_without_overwriting_old(self):
+        bundle = Bundle(self.data, 'main', 1)
+        try:
+            def previous_implementation(path):
+                return '0' * 64 if Path(path).name == 'graphs.py' else digest(path)
+            with contextlib.redirect_stdout(io.StringIO()):
+                with mock.patch('replogle_training.artifacts.digest', side_effect=previous_implementation):
+                    _, previous = preprocessing(bundle, self.config, self.annotation, self.root / 'cache')
+                previous_path = Path(previous['path']) / 'arrays.npz'
+                previous_hash = digest(previous_path)
+                _, current = preprocessing(bundle, self.config, self.annotation, self.root / 'cache')
+            self.assertNotEqual(previous['key'], current['key'])
+            self.assertEqual(digest(previous_path), previous_hash)
+            self.assertTrue((Path(current['path']) / 'arrays.npz').exists())
         finally:
             bundle.close()
 
@@ -201,7 +296,7 @@ class TrainingTests(unittest.TestCase):
         finally:
             bundle.close()
 
-    def test_cli_plan_and_actual_training_from_another_directory(self):
+    def test_cli_plan_and_all_three_variants_use_the_revised_shared_graph(self):
         output = self.root / 'cli-runtime'
         base = [sys.executable, str(REPO / 'scripts/replogle_train.py')]
         common = ['--data-dir', str(self.data), '--output-root', str(output), '--gene2go', str(self.annotation),
@@ -210,11 +305,30 @@ class TrainingTests(unittest.TestCase):
                               cwd=self.root, check=True, capture_output=True, text=True)
         self.assertEqual(len(plan.stdout.splitlines()), 18)
         self.assertFalse(output.exists())
-        subprocess.run(base + ['train', '--task', 'k562_to_rpe1', '--variant', 'C', '--split-seed', '1'] + common,
-                       cwd=self.root, check=True, capture_output=True, text=True)
-        result = json.loads((output / 'runs/k562_to_rpe1_C_split1_train101/results.json').read_text())
-        self.assertFalse(result['test_evaluated'])
-        self.assertTrue(result['checkpoint_reload_verified'])
+        graphs, keys = [], set()
+        for variant in ('A', 'B', 'C'):
+            with self.subTest(variant=variant):
+                process = subprocess.run(base + ['train', '--task', 'main', '--variant', variant,
+                                                '--split-seed', '1'] + common,
+                                         cwd=self.root, check=True, capture_output=True, text=True)
+                directory = output / 'runs' / f'joint_unseen_{variant}_split1_train101'
+                result = json.loads((directory / 'results.json').read_text())
+                run_metadata = json.loads((directory / 'run.json').read_text())
+                cache = result['preprocessing']
+                self.assertEqual(cache['coexpression_method'], 'mean_absolute_within_line_pearson_v1')
+                self.assertEqual(run_metadata['preprocessing'], cache)
+                self.assertIn(f"Variant {variant}: coexpression_method={cache['coexpression_method']}", process.stdout)
+                self.assertFalse(result['test_evaluated'])
+                self.assertTrue(result['checkpoint_reload_verified'])
+                metadata = json.loads((Path(cache['path']) / 'metadata.json').read_text())
+                self.assertEqual(metadata['inputs']['coexpression_method'], cache['coexpression_method'])
+                keys.add(cache['key'])
+                model, _ = load_checkpoint(directory / 'best.pt')
+                graphs.append((model.G_coexpress, model.G_coexpress_weight))
+        self.assertEqual(len(keys), 1)
+        for graph in graphs[1:]:
+            for expected, actual in zip(graphs[0], graph):
+                torch.testing.assert_close(expected, actual, atol=0, rtol=0)
 
 
 if __name__ == '__main__':

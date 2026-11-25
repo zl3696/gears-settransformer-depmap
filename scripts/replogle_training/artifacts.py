@@ -11,12 +11,13 @@ import torch
 
 from gears.replogle_model import restore_model
 from replogle_data.io import digest, require, write_json
-from .graphs import build_arrays
+from .graphs import COEXPRESSION_METHOD, build_arrays
 
 
 def preprocessing(bundle, config, annotation_path, output_root):
     keys = ('coexpression_k', 'coexpression_threshold', 'go_k', 'go_threshold', 'gene2go_sha256', 'de_genes')
-    inputs = dict(data=bundle.contract, graph_config={k: config[k] for k in keys},
+    inputs = dict(data=bundle.contract, coexpression_method=COEXPRESSION_METHOD,
+                  graph_config={k: config[k] for k in keys},
                   implementation_sha256={name: digest(Path(__file__).with_name(name))
                                          for name in ('graphs.py', 'dataset.py')})
     key = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
@@ -47,7 +48,8 @@ def preprocessing(bundle, config, annotation_path, output_root):
     require(digest(directory / 'arrays.npz') == metadata['arrays_sha256'], 'Preprocessing cache is corrupted')
     with np.load(directory / 'arrays.npz', allow_pickle=False) as data:
         arrays = {k: data[k].copy() for k in data.files}
-    return arrays, dict(key=key, path=str(directory), arrays_sha256=metadata['arrays_sha256'])
+    return arrays, dict(key=key, path=str(directory), arrays_sha256=metadata['arrays_sha256'],
+                        coexpression_method=COEXPRESSION_METHOD)
 
 
 def save_checkpoint(path, model, config, contract, epoch, metric, references):

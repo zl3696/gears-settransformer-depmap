@@ -111,6 +111,8 @@ def run(data_dir, output_root, task, variant, split_seed, config_path, gene2go, 
         arrays, cache = preprocessing(bundle, config, gene2go, output_root)
         provenance.update(preprocessing=cache, state='training')
         write_json(directory / 'run.json', provenance)
+        print(f"Variant {variant}: coexpression_method={cache['coexpression_method']}, "
+              f"shared_graph_cache={cache['key']}", flush=True)
         model_config = {k: config[k] for k in ('hidden_size', 'decoder_hidden_size', 'num_go_gnn_layers', 'num_gene_gnn_layers')}
         model_config.update(num_genes=len(bundle.genes), num_perts=len(bundle.perturbations), no_perturb=False,
                             uncertainty=False, pert_agg='sum', expression_genes=bundle.genes,
