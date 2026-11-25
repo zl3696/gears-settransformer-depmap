@@ -101,6 +101,9 @@ training-only graphs/masks, validation-only checkpoint selection, and fixed
 DepMap projection. The separate [evaluation workflow](replogle-evaluation.md)
 provides inference-only prediction/scoring and the transfer Copy-effect baseline. The
 historical Norman manifests and numerical sources are unchanged.
+The fixed variant-C feature bundle is included at
+`priors/depmap/morph_depmap.npz`; see [provenance and validation](../priors/depmap/README.md).
+Expression data, caches and training outputs remain external to the checkout.
 
 ## Commands from any directory
 

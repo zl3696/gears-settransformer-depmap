@@ -21,6 +21,8 @@
   both constituent singles in training. Fit preprocessing only on training data.
 - Keep downloaded expression data, runtime caches, checkpoints, and new runtime
   outputs out of Git. In the local course workspace, write them under `Codex Outputs/`.
+  The explicitly requested fixed prior in `priors/depmap/` is versioned for team use;
+  see its [provenance and usage](priors/depmap/README.md).
   The explicitly requested `results/norman/additive/` and `results/norman/linear/`
   are curated results snapshots; keep future exports deliberate and documented.
 - Preserve `scripts/norman_additive/`, `scripts/norman_linear/`, and their historical

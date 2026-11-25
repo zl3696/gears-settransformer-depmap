@@ -105,11 +105,14 @@ test results. No full Replogle fit or final-test evaluation has been completed.
 Set these variables to absolute locations. Dependencies are the existing GEARS
 stack (PyTorch, PyG, Scanpy, anndata, h5py, NumPy, SciPy, pandas). Tested locally
 with Python 3.12, PyTorch 2.2.2, NumPy 1.26.4 and SciPy 1.14.1.
+Variant C's prepared [DepMap prior](../priors/depmap/README.md) is included in
+the checkout; use its repository path below. A/B do not load this file.
 
 ```bash
 repo_dir='/absolute/path/to/gears-settransformer-depmap'
 runtime_dir='/absolute/path/to/Codex Outputs'
 python_bin="$runtime_dir/.venvs/gears/bin/python"
+prior="$repo_dir/priors/depmap/morph_depmap.npz"
 common=(--data-dir "$runtime_dir/outputs/replogle-paired-singlecell-v1"
         --output-root "$runtime_dir/outputs/replogle-training-v1"
         --gene2go "$runtime_dir/tmp/morph-gears-review/gene2go_all.pkl")
@@ -121,11 +124,11 @@ common=(--data-dir "$runtime_dir/outputs/replogle-paired-singlecell-v1"
   --task main --variant B --split-seed 1
 "$python_bin" "$repo_dir/scripts/replogle_train.py" train "${common[@]}" \
   --task main --variant C --split-seed 1 \
-  --depmap-features "$runtime_dir/outputs/replogle-depmap-v1/morph_depmap.npz"
+  --depmap-features "$prior"
 
 # Print all 45 commands; printing does not create or run models.
 "$python_bin" "$repo_dir/scripts/replogle_train.py" plan "${common[@]}" \
-  --depmap-features "$runtime_dir/outputs/replogle-depmap-v1/morph_depmap.npz"
+  --depmap-features "$prior"
 ```
 
 Add `--execute` to `plan` to run sequentially. Narrow it with `--tasks main`,
