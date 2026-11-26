@@ -101,7 +101,9 @@ the budget from 20 to 10 epochs before any formal run: with the per-epoch 0.5
 multiplier the learning rate is below 2e-6 after epoch 10, so later epochs
 barely change the model while doubling Replogle training time. Change a copied
 configuration before formal runs and use a new output root; do not adapt it to
-test results. No full Replogle fit or final-test evaluation has been completed.
+test results. The `main` A/B/C five-split fit and final test are complete; see
+[joint-unseen results](../results/replogle/joint-unseen/README.md). Transfer
+tasks have not been run.
 
 ## Commands from any directory
 

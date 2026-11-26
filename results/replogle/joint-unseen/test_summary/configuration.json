@@ -1,0 +1,55 @@
+{
+  "complete_five_split": true,
+  "partition": "test",
+  "protocol": "joint_unseen",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "source_sha256": {
+    "configs/replogle_evaluation.json": "c472d3f57970bf2ba6ed47af333139fefeaa4510f3ca466a8a1655b2b30694e5",
+    "gears/depmap.py": "75a659127ee80571b9aa0821192ac16fb8cbdd3ae90e0eba5919cc8c0d89ea78",
+    "gears/inference.py": "744668b54fa05c0493baefad3da6fdccfa658426db5d0519b27a2d3f4f036dd7",
+    "gears/model.py": "b8d10763e2ff98cf518fd56c594c85eece8856c766ea150090e027df4b193992",
+    "gears/replogle_model.py": "8127457fc81c69bf9e5177f0018bc73a6ada5a3431153a11fadf50dfc4bac72e",
+    "scripts/replogle_data/__init__.py": "381db865d247fd6ad2e1be70d7fe61675c81e57078dc9ea188a9dfc8428dd335",
+    "scripts/replogle_data/io.py": "c67fca4d4b3d35547897557794781aadf46691d2cc2aa8c2ef07a9ecb01ccfc1",
+    "scripts/replogle_data/protocol.py": "89a9fcfcf11cb4ae386b0bc000f910bbe694250bf9c51ffca0b6fa4ab50b1659",
+    "scripts/replogle_data/workflow.py": "ad5e0e78f9a90934f9da40d4245109be70d5d4e9090556907f4ce323b62a6afe",
+    "scripts/replogle_evaluation/__init__.py": "b9f64cac32689e6acc31296422d4e46763044693ee1bc2affaaf14f262449725",
+    "scripts/replogle_evaluation/artifacts.py": "81b0af3b2a73cd9e6be5455f5c2e4e901174c7071353eb98a4bf8c4219829e44",
+    "scripts/replogle_evaluation/dataset.py": "86e78d4925c346955fe52da5fa5772af4128f650e823e9a502a826806498c0d5",
+    "scripts/replogle_evaluation/metrics.py": "005c891e6b7772ab8df0e85505034a9d8e3ce41a9bec2f0bc5cdeb0524dbf0c6",
+    "scripts/replogle_evaluation/prediction.py": "c41f5f07b679a44e0999a353cc8128b7e3b4790667a877d01a6f25244925edde",
+    "scripts/replogle_evaluation/summary.py": "cc1bb6ca0d362916546e687372f55ff204e4930bbef0a92cf101b2a69143fc19",
+    "scripts/replogle_evaluation/workflow.py": "997e6dc9f55bef89a9b4d846b34fed5438448bd8f1cbcf4c9b30656d8451927d",
+    "scripts/replogle_test.py": "744678f15f3d97c1145e06a328f4a53c535d169f7d9bb20b6b9b84bc2eac9b79",
+    "scripts/replogle_training/artifacts.py": "2846670b1cd1170d118e51fde0a91ba174bea3429d7d91d34dd272589d64d735",
+    "scripts/replogle_training/dataset.py": "60a3c46302a609d1c58d0f24571c301c79e3ddfda79faad2e76e09d0c83b384d"
+  },
+  "sources": {
+    "runs\\joint_unseen\\seed_1\\A\\test": "a7068283a2582c85fde115536fbda691112dd2beb197f165eafa67b4dbbd2740",
+    "runs\\joint_unseen\\seed_1\\B\\test": "6713068f9aadf3b5898ef78153155cb3001a6fa0c08cb436ca04b1178dbab2f5",
+    "runs\\joint_unseen\\seed_1\\C\\test": "470bafb0278c2c595dfa5a48ee3a74ac59f42f6371c0cba8b9adeecc3e01cf20",
+    "runs\\joint_unseen\\seed_2\\A\\test": "3369aea6116039e77fd1b62047f1ae3a86146e6a28989882db0ee16d67f146c4",
+    "runs\\joint_unseen\\seed_2\\B\\test": "a9075f6db56eea384d78dfd51522fe7eecfa9b41c02d4259c26dbf50f00400bf",
+    "runs\\joint_unseen\\seed_2\\C\\test": "e2dc9f9870ae089f9df06b3bbde275a7c208a47700e98f6b3a1fe6b43b72fac0",
+    "runs\\joint_unseen\\seed_3\\A\\test": "0e858356a75735c3ddca5c059ab3dddf88af2b87a57165d2cd1a1d7ec93a9615",
+    "runs\\joint_unseen\\seed_3\\B\\test": "1897915765765178dad012207a2f8f7d7a1ef2e2d46206afe0fd2395f1f65475",
+    "runs\\joint_unseen\\seed_3\\C\\test": "f770b68cdf6ba6485f8d6f474976a96c746e12bffb0a5eeff9e0a1e3cda58dfc",
+    "runs\\joint_unseen\\seed_4\\A\\test": "75fb21b946a029d8e768a32949204576103416d54f2ec629765b9d790aa8395f",
+    "runs\\joint_unseen\\seed_4\\B\\test": "4b0b171305becec4dff115aeea7c7565286a06b6794b66854a659d032e513dae",
+    "runs\\joint_unseen\\seed_4\\C\\test": "dadec51baf038ac1cf9b7409eb9bc0603b7cc12d452cdf2b4132fbe09776ba1c",
+    "runs\\joint_unseen\\seed_5\\A\\test": "215d6828ca395040bdc1d34d312a14971d122abd2742055be75931d4c537a19b",
+    "runs\\joint_unseen\\seed_5\\B\\test": "9d55551e1334fa74e8c43ce1cacadd4b4855c30dfaf30b069af227a965208922",
+    "runs\\joint_unseen\\seed_5\\C\\test": "63d074f097514393590608d6c2c23ba27d03c3075b5e4871c36dfa289df687f1"
+  },
+  "variants": [
+    "A",
+    "B",
+    "C"
+  ]
+}

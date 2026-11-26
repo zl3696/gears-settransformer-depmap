@@ -1,0 +1,2 @@
+# Store evaluator output byte-for-byte so manifest.json SHA256 values stay valid.
+* -text

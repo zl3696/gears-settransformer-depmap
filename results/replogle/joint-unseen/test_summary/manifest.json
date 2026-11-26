@@ -1,0 +1,28 @@
+{
+  "files": {
+    "configuration.json": "12ba562414a4476b5ce47cacc43aed1bfa458638932892d2c275f1c79a8a64d1",
+    "figure_metadata.json": "a649c24bf0d036936f0ecbd47ae24b783ef94bfd5be019bc3791a93a3cf987a0",
+    "metric_summary.csv": "63b8c5bb9f841df8b7432899becff98bf0d92deb2fbfbb054a0bbddba200d086",
+    "paired_difference_summary.csv": "d5dcd59ac8689ffda4acdc3ef31e4f7d7c3436b72b4b88f7f4164c01d700ac3f",
+    "paired_per_target_differences.csv": "3ffaae863c9af2435b7985894b80179745258efcb5c781c8f7df87217eea9d91",
+    "paired_split_differences.csv": "f90e882d82eaf310eae7890a1e3e1504318fd648fa19199ddc09801e3d1379ff",
+    "report.md": "f67412fc7a81ce708ff347382dffb71d405b97b7ce67b725f7070ec232867834",
+    "similarity_split1.csv": "cb0d06c318fb9dfe6f7b8ff795f03d630c1c1291bddb7ea752a75553825e9ce6",
+    "similarity_split1.pdf": "cd82438772fe92950736a4ff93423c05245118586e1aa40c6e4372b8684c9dcf",
+    "similarity_split1.png": "efc9dea097e9a8e226fd729f6c252a131051362ddc43e4dd8e3849399601e074",
+    "similarity_split2.csv": "b614874c065d67444e05e2cf0a81993cb6d3cd42654ed4992681ad4b5ba4a638",
+    "similarity_split2.pdf": "233f2f755924073f4fc849e271a80ded605d39d3adc923d041251d246c7acfa5",
+    "similarity_split2.png": "a0182c0da59fbc14a2b20d8729db932c183468a7f98fb4e3bb43e76e346b3735",
+    "similarity_split3.csv": "d4b3cc580a644bbeb630d38e70fa42cd91ecd3625b4d35df4930483a1bdcd2f5",
+    "similarity_split3.pdf": "a4f388744efea71f1bbebd76a952e423a887f1e3d6d4b16275a0369d0715ca36",
+    "similarity_split3.png": "32b5784550df27ad97122d4303b457f859d759553eb399c455aa5a19b245cabd",
+    "similarity_split4.csv": "fe95d2fbac86e50a2e23638b8194d4ece6b57ffbc814f28f480b513613b04c5e",
+    "similarity_split4.pdf": "08442422955d265702b4b5cbe9f2c6164f8c1450891085ae91561dd6521768e4",
+    "similarity_split4.png": "b8d9e84f572a7e2fc18e0b0fa8ef63b3a09494731bdabf8a0cb5726400e0071d",
+    "similarity_split5.csv": "3f538b0bd4ceb513669885163bca20133b0c4d43dc0e6a892e2127ca3314cc12",
+    "similarity_split5.pdf": "1de339e50dde955904c19f58404a6e1b2e38c80ea34a6ab4cb325724c73498ec",
+    "similarity_split5.png": "c88dfd237aeaf504c1c45497cb4674e9a800b38a4036e0cb938f1d6b7aa42550",
+    "split_metrics.csv": "1c12fd2a3d68db9c3eb05a48650c035c461709959dbb345f19d14137f1222408"
+  },
+  "schema_version": 1
+}

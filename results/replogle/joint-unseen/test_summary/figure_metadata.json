@@ -1,0 +1,42 @@
+{
+  "description": "Separate variant panels compare measured and predicted cross-line response similarity. Closeness to the diagonal indicates similarity recovery; underlying per-target values are provided in CSV.",
+  "formats": [
+    "png",
+    "pdf"
+  ],
+  "identity_reference": true,
+  "limits": [
+    -1.05,
+    1.05
+  ],
+  "missing": "Undefined pairs retained in CSV, omitted from scatter, counted in panel titles",
+  "png_dpi": 300,
+  "sampling_unit": "One held-out target within a split; splits overlap",
+  "smoothing": false,
+  "source_evaluation_manifest_sha256": {
+    "runs\\joint_unseen\\seed_1\\A\\test": "a7068283a2582c85fde115536fbda691112dd2beb197f165eafa67b4dbbd2740",
+    "runs\\joint_unseen\\seed_1\\B\\test": "6713068f9aadf3b5898ef78153155cb3001a6fa0c08cb436ca04b1178dbab2f5",
+    "runs\\joint_unseen\\seed_1\\C\\test": "470bafb0278c2c595dfa5a48ee3a74ac59f42f6371c0cba8b9adeecc3e01cf20",
+    "runs\\joint_unseen\\seed_2\\A\\test": "3369aea6116039e77fd1b62047f1ae3a86146e6a28989882db0ee16d67f146c4",
+    "runs\\joint_unseen\\seed_2\\B\\test": "a9075f6db56eea384d78dfd51522fe7eecfa9b41c02d4259c26dbf50f00400bf",
+    "runs\\joint_unseen\\seed_2\\C\\test": "e2dc9f9870ae089f9df06b3bbde275a7c208a47700e98f6b3a1fe6b43b72fac0",
+    "runs\\joint_unseen\\seed_3\\A\\test": "0e858356a75735c3ddca5c059ab3dddf88af2b87a57165d2cd1a1d7ec93a9615",
+    "runs\\joint_unseen\\seed_3\\B\\test": "1897915765765178dad012207a2f8f7d7a1ef2e2d46206afe0fd2395f1f65475",
+    "runs\\joint_unseen\\seed_3\\C\\test": "f770b68cdf6ba6485f8d6f474976a96c746e12bffb0a5eeff9e0a1e3cda58dfc",
+    "runs\\joint_unseen\\seed_4\\A\\test": "75fb21b946a029d8e768a32949204576103416d54f2ec629765b9d790aa8395f",
+    "runs\\joint_unseen\\seed_4\\B\\test": "4b0b171305becec4dff115aeea7c7565286a06b6794b66854a659d032e513dae",
+    "runs\\joint_unseen\\seed_4\\C\\test": "dadec51baf038ac1cf9b7409eb9bc0603b7cc12d452cdf2b4132fbe09776ba1c",
+    "runs\\joint_unseen\\seed_5\\A\\test": "215d6828ca395040bdc1d34d312a14971d122abd2742055be75931d4c537a19b",
+    "runs\\joint_unseen\\seed_5\\B\\test": "9d55551e1334fa74e8c43ce1cacadd4b4855c30dfaf30b069af227a965208922",
+    "runs\\joint_unseen\\seed_5\\C\\test": "63d074f097514393590608d6c2c23ba27d03c3075b5e4871c36dfa289df687f1"
+  },
+  "source_tables": [
+    "similarity_split1.csv",
+    "similarity_split2.csv",
+    "similarity_split3.csv",
+    "similarity_split4.csv",
+    "similarity_split5.csv"
+  ],
+  "x": "Measured K562\u2013RPE1 response Pearson",
+  "y": "Predicted K562\u2013RPE1 response Pearson"
+}

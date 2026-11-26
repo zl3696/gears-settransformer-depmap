@@ -13,7 +13,7 @@
 - Additive and fitted linear baselines have five validation/test panels. Published
   historical and new corrected-batching GEARS/replacement/residual Set Transformer
   checkpoints have matched five-split final-test results. Norman DepMap comparisons
-  remain pending.
+  remain pending. Replogle `main` A/B/C has five-split final-test results.
 
 ## Development rules
 - Preserve existing model behavior unless a requested change requires otherwise.
@@ -42,6 +42,8 @@
   `scripts/replogle_test.py {plan,run,verify,regenerate,summary}` evaluates frozen
   A/B/C checkpoints and transfer Copy-effect, with validation-first testing,
   explicit control-offset correction and matched response/similarity outputs.
+- [Replogle joint-unseen results](results/replogle/joint-unseen/README.md): curated
+  five-split A/B/C final-test summary (10 epochs); transfer tasks not yet run.
 - [Norman splits](docs/norman-splits.md): split rules, provenance, file map,
   GEARS integration limits, and portable verify/generate/test commands.
 - `scripts/norman_splits.py verify` audits hashes and reconstructs assignments.
